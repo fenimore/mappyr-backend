@@ -112,6 +112,25 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 }
 
 /* Update DB, Upvote and Downvote */
+// UpVote updates a comment
+func UpVote(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Upvote
+}
+
+// DownVote updates a vote
+func DownVote(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Downvote
+}
 
 /* Authentication */
 // Login authenticates user using jwt token
