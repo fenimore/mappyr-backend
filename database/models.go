@@ -18,7 +18,7 @@ type Comment struct {
 
 func (c *Comment) String() string {
 	return fmt.Sprintf("Comment %i: %s\nAt %f %f",
-		s.Id, s.Text, s.Lat, s.Lon)
+		c.Id, c.Text, c.Lat, c.Lon)
 }
 
 type User struct {

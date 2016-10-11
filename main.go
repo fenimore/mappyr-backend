@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/polypmer/sunken/api"
-	"github.com/polypmer/sunken/database"
+	"github.com/polypmer/mappyr/api"
+	"github.com/polypmer/mappyr/database"
 )
 
 func main() {

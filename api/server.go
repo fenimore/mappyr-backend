@@ -19,7 +19,7 @@ func Serve(connection *sql.DB) { // pass in connection
 
 	router := NewRouter()
 
-	err := http.ListenAndServer(":8080", router)
+	err := http.ListenAndServe(":8080", router)
 	if err != nil { // should I log fatal??
 		fmt.Println(err)
 	}

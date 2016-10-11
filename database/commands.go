@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 /* Database Helpers */
@@ -44,7 +46,7 @@ CREATE TABLE IF NOT EXISTS users(
 	if err != nil {
 		return err
 	}
-	_, err := db.Exec(comment_schema)
+	_, err = db.Exec(comment_schema)
 	if err != nil {
 		return err
 	}

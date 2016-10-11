@@ -13,8 +13,10 @@ type Route struct {
 	HandlerFunc http.HandlerFunc
 }
 
+type Routes []Route
+
 func NewRouter() *mux.Router {
-	router := mux.NewRouteR().StrictSlash(true)
+	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
 		var handler http.Handler
 
@@ -22,7 +24,7 @@ func NewRouter() *mux.Router {
 		handler = Logger(handler, route.Name)
 
 		router.Methods(route.Method).
-			Path(route.Patter).
+			Path(route.Pattern).
 			Name(route.Name).
 			Handler(handler)
 	}
@@ -48,5 +50,5 @@ var routes = Routes{
 		"GET",
 		"/comments",
 		ShowComments,
-	}
+	},
 }

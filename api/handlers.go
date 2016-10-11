@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/polypmer/mappyr/database"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
