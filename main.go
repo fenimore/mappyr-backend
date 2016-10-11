@@ -17,5 +17,10 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	_, err = database.MockComment(db)
+	if err != nil {
+		fmt.Println(err)
+	}
 	api.Serve(db)
 }
