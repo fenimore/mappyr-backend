@@ -31,6 +31,10 @@ the create route accepts the POST method, it only needs a title, description, an
 These accept a GET method, and they update the count of downvotes or upvotes for a comment row. It'll then return the very comment which is being commented (maybe this'll just want to be ignored, but I thought'd be a good idea to return *something*.
 
 
+	/delete/{id}
+	
+this accepts an id, and deletes that post. Uhm, this *needs* some sort of auth.
+
 ## TODO
 
 This list ought to be longer
@@ -41,8 +45,7 @@ This list ought to be longer
 
 ### todo routes:
 
+
 	/login
 	
 	/token
-	
-	/delete
