@@ -68,6 +68,12 @@ var routes = Routes{
 		"GET",
 		"/downvote/{id}",
 		DownVote,
+	},
+	Route{
+		"Delete",
+		"GET",
+		"/delete/{id}",
+		DeleteComment,
 	}, // AUTH
 	Route{
 		"Login",

@@ -173,6 +173,31 @@ func DownVote(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/* Delete */
+func DeleteComment(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	err = database.Delete(db, id)
+	if err != nil {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		success := "Success"
+		err = json.NewEncoder(w).Encode(success)
+		if err != nil {
+			fmt.Fprintf(w, "Error JSON encoding %s", err)
+		}
+	}
+}
+
 /* Authentication */
 // Login authenticates user using jwt token
 func Login(w http.ResponseWriter, r *http.Request) {
