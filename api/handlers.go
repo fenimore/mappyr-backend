@@ -107,3 +107,14 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 }
+
+/* Authentication */
+// Login authenticates user using jwt token
+func Login(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// NewToken
+func NewToken(w http.ResponseWriter, r *http.Request) {
+
+}

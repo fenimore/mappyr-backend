@@ -6,14 +6,19 @@ import (
 )
 
 // TODO: Add a place model?
-
+// TODO:
+// Description
+// UPvote and Downvote
 type Comment struct {
-	Id     int64     `json:"id"`
-	Text   string    `json:"title"`
-	Lat    float64   `json:"latitude"`
-	Lon    float64   `json:"longitude"`
-	Date   time.Time `json:"date"`
-	UserId int64     `json:"user-id"` // 0 for anon
+	Id          int64     `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Lat         float64   `json:"latitude"`
+	Lon         float64   `json:"longitude"`
+	Upvotes     int       `json:"upvotes"`
+	Downvotes   int       `json:"downvotes"`
+	Date        time.Time `json:"date"`
+	UserId      int64     `json:"user-id"` // 0 for anon
 }
 
 func (c *Comment) String() string {

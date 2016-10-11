@@ -26,9 +26,12 @@ func CreateTable(db *sql.DB) error {
 	comment_schema := `
 CREATE TABLE IF NOT EXISTS comments(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    text TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
     lat FLOAT NOT NULL,
     lon FLOAT NOT NULL,
+    upvotes INTEGER DEFAULT 0,
+    downvotes INTEGER DEFAULT 0,
     date DATETIME,
     user INTEGER DEFAULT 0
 );
@@ -55,13 +58,14 @@ CREATE TABLE IF NOT EXISTS users(
 
 // MockComment inserts a fake comment for testing
 func MockComment(db *sql.DB) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO comments(text, lat, lon," +
+	stmt, err := db.Prepare("INSERT INTO comments(title, " +
+		"description, lat, lon," +
 		"date, user)values(?,?,?,?,?)")
 	if err != nil {
 		return -1, err
 	}
-	res, err := stmt.Exec("Great food!", "41.333", "-71.333",
-		time.Now(), 0)
+	res, err := stmt.Exec("Great food!", "Although crap service",
+		"41.353", "-71.113", time.Now(), 0)
 	if err != nil {
 		return -1, err
 	}
@@ -107,8 +111,10 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 
 	for rows.Next() {
 		c := Comment{}
-		err = rows.Scan(&c.Id, &c.Text,
+		err = rows.Scan(&c.Id, &c.Title,
+			&c.Description,
 			&c.Lat, &c.Lon,
+			&c.Upvotes, &c.Downvotes,
 			&c.Date, &c.UserId)
 		if err != nil {
 			return nil, err
@@ -122,12 +128,12 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 /* DB Write */
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO comments(text, lat, lon," +
-		"date, user)values(?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO comments(title, description," +
+		" lat, lon, date, user)values(?,?,?,?,?)")
 	if err != nil {
 		return -1, err
 	}
-	res, err := stmt.Exec(c.Text, c.Lat, c.Lon,
+	res, err := stmt.Exec(c.Title, c.Description, c.Lat, c.Lon,
 		time.Now(), c.UserId)
 	if err != nil {
 		return -1, err

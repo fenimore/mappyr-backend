@@ -68,6 +68,5 @@ var routes = Routes{
 		"GET",
 		"/token",
 		NewToken,
-	}
-		
+	},
 }
