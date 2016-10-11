@@ -163,7 +163,7 @@ func UpVoteComment(db *sql.DB, id int) error {
 
 // DownVoteComment downvotes a row
 func DownVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes - 1 where id=?")
+	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where id=?")
 	if err != nil {
 		return err
 	}
