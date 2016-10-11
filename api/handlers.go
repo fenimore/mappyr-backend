@@ -18,6 +18,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Index")
 }
 
+/* DB Read */
+
 func ShowComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -56,3 +58,6 @@ func ShowComments(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error JSON encoding %s", err)
 	}
 }
+
+/* DB Write */
+//

@@ -51,4 +51,23 @@ var routes = Routes{
 		"/comments",
 		ShowComments,
 	},
+	Route{
+		"NewComment",
+		"POST",
+		"/new",
+		NewComment,
+	},
+	Route{
+		"Login",
+		"POST",
+		"/login",
+		Login,
+	},
+	Route{ // For testing purposes
+		"NewToken",
+		"GET",
+		"/token",
+		NewToken,
+	}
+		
 }

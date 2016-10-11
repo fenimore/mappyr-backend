@@ -72,6 +72,8 @@ func MockComment(db *sql.DB) (int64, error) {
 	return id, nil
 }
 
+/* DB read */
+
 // ReadComment reads a comment from the datase with an id.
 func ReadComment(db *sql.DB, id int) (Comment, error) {
 	rows, err := db.Query("select * from comments where id = ?", id)
@@ -117,5 +119,24 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 	return comments, nil
 }
 
-// TODO
+/* DB Write */
+// WriteComment
+func WriteComment(db *sql.DB, c Comment) (int64, error) {
+	stmt, err := db.Prepare("INSERT INTO comments(text, lat, lon," +
+		"date, user)values(?,?,?,?,?)")
+	if err != nil {
+		return -1, err
+	}
+	res, err := stmt.Exec(c.Text, c.Lat, c.Lon,
+		time.Now(), c.UserId)
+	if err != nil {
+		return -1, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
+}
+
 // Put/ delete/ Create
