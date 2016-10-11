@@ -1,16 +1,20 @@
 package api
 
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+	"net/http"
+)
 
 // TODO:
 // Define a global database variablei
-// var db
+var db *sql.DB
 
 // Serve connection
 
-func Serve() { // pass in connection
+func Serve(connection *sql.DB) { // pass in connection
 	// set connection to global
-
+	db = connection
 	fmt.Println("Serving API on port 8080")
 
 	router := NewRouter()

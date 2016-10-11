@@ -37,4 +37,16 @@ var routes = Routes{
 		"/",
 		Index,
 	},
+	Route{
+		"ShowComment",
+		"GET",
+		"/comment/{id}",
+		ShowComment,
+	},
+	Route{
+		"ShowComments",
+		"GET",
+		"/comments",
+		ShowComments,
+	}
 }
