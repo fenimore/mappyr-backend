@@ -148,6 +148,31 @@ func WriteComment(db *sql.DB, c Comment) (int64, error) {
 }
 
 // Put/ delete/ Create
+// UpVoteComment
+func UpVoteComment(db *sql.DB, id int) error {
+	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where id=?")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DownVoteComment downvotes a row
+func DownVoteComment(db *sql.DB, id int) error {
+	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes - 1 where id=?")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 /* Update DB */
 // Upvote upvotes a comment

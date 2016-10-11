@@ -112,17 +112,39 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 }
 
 /* Update DB, Upvote and Downvote */
-// UpVote updates a comment
+// UpVote updates a comment and returns the voted comment
 func UpVote(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	// Upvote
+	err = database.UpVoteComment(db, id)
+	fmt.Println(err)
+	if err != nil {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		c, _ := database.ReadComment(db, id)
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		err = json.NewEncoder(w).Encode(c)
+		if err != nil {
+			fmt.Fprintf(w, "Error JSON encoding %s", err)
+		}
+	}
+
 }
 
-// DownVote updates a vote
+// DownVote updates a vote and returns the voted comment
 func DownVote(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -130,6 +152,25 @@ func DownVote(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	// Downvote
+	err = database.DownVoteComment(db, id)
+	if err != nil {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		c, _ := database.ReadComment(db, id)
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		err = json.NewEncoder(w).Encode(c)
+		if err != nil {
+			fmt.Fprintf(w, "Error JSON encoding %s", err)
+		}
+	}
 }
 
 /* Authentication */

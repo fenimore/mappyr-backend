@@ -38,7 +38,7 @@ var routes = Routes{
 		"GET",
 		"/",
 		Index,
-	},
+	}, // READ
 	Route{
 		"ShowComment",
 		"GET",
@@ -50,13 +50,25 @@ var routes = Routes{
 		"GET",
 		"/comments",
 		ShowComments,
-	},
+	}, // CREATE
 	Route{
 		"NewComment",
 		"POST",
 		"/new",
 		NewComment,
+	}, // UPDATE
+	Route{
+		"UpVote",
+		"GET",
+		"/upvote/{id}",
+		UpVote,
 	},
+	Route{
+		"DownVote",
+		"GET",
+		"/downvote/{id}",
+		DownVote,
+	}, // AUTH
 	Route{
 		"Login",
 		"POST",
