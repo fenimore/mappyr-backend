@@ -15,7 +15,7 @@ func main() {
 
 	err = database.CreateTable(db)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Creation erro", err)
 	}
 
 	_, err = database.MockComment(db)

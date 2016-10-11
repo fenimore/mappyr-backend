@@ -72,12 +72,15 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println(string(body))
 	err = r.Body.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println(string(body))
 	// Unmarshal, stick into my struct
 	err = json.Unmarshal(body, &comment)
+	fmt.Println(comment)
 	// Unable to marshal?:
 	if err != nil {
 		// if shit don't work out
@@ -107,6 +110,8 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 }
+
+/* Update DB, Upvote and Downvote */
 
 /* Authentication */
 // Login authenticates user using jwt token

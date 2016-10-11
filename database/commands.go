@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS users(
 func MockComment(db *sql.DB) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO comments(title, " +
 		"description, lat, lon," +
-		"date, user)values(?,?,?,?,?)")
+		"date, user)values(?,?,?,?,?, ?)")
 	if err != nil {
 		return -1, err
 	}
@@ -87,8 +87,10 @@ func ReadComment(db *sql.DB, id int) (Comment, error) {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err = rows.Scan(&c.Id, &c.Text,
+		err = rows.Scan(&c.Id, &c.Title,
+			&c.Description,
 			&c.Lat, &c.Lon,
+			&c.Upvotes, &c.Downvotes,
 			&c.Date, &c.UserId)
 	}
 	rows.Close()
@@ -146,3 +148,6 @@ func WriteComment(db *sql.DB, c Comment) (int64, error) {
 }
 
 // Put/ delete/ Create
+
+/* Update DB */
+// Upvote upvotes a comment
