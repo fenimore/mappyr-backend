@@ -142,7 +142,9 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
-	err := db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,uid) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
+	err := db.QueryRow("INSERT INTO comments(title,description,lat,lon,date,uid)"+
+		" VALUES($1,$2,$3,$4,$5,$6) returning id;",
+		c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
 		return -1, err
 	}
