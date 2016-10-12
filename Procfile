@@ -1,1 +1,1 @@
-web: mappyr -port=8080
+web: mappyr-backend -port=8080
