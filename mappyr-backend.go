@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/polypmer/mappyr-backend/api"
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
+	portFlag := flag.String("port", ":8080", "the server port, prefixed by :")
 	db, err := database.InitDB()
 	defer db.Close() // This ought to have been a while ago
 	if err != nil {
@@ -19,5 +21,5 @@ func main() {
 		fmt.Println("Creation error", err)
 	}
 
-	api.Serve(db)
+	api.Serve(db, *portFlag)
 }
