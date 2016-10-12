@@ -119,7 +119,6 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 
 	// Upvote
 	err = database.UpVoteComment(db, id)
-	fmt.Println(err)
 	if err != nil {
 		w.Header().Set("Content-Type",
 			"application/json;charset=UTF-8")
