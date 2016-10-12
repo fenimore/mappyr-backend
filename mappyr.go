@@ -18,9 +18,5 @@ func main() {
 		fmt.Println("Creation erro", err)
 	}
 
-	_, err = database.MockComment(db)
-	if err != nil {
-		fmt.Println(err)
-	}
 	api.Serve(db)
 }

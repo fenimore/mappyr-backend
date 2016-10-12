@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 // MockComment inserts a fake comment for testing
 // Only Works for SQLITE
+// DEPRECATED
 func MockComment(db *sql.DB) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO comments(title, " +
 		"description, lat, lon," +
@@ -90,7 +91,7 @@ func MockComment(db *sql.DB) (int64, error) {
 
 // ReadComment reads a comment from the datase with an id.
 func ReadComment(db *sql.DB, id int) (Comment, error) {
-	rows, err := db.Query("select * from comments where id = ?", id)
+	rows, err := db.Query("select * from comments where id = $1", id)
 	c := Comment{}
 	if err != nil {
 		return c, err
@@ -140,27 +141,18 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 /* DB Write */
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO comments(title, description," +
-		" lat, lon, date, user)values(?,?,?,?,?)")
+	var lastInsertId int
+	err = db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,user) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
 		return -1, err
 	}
-	res, err := stmt.Exec(c.Title, c.Description, c.Lat, c.Lon,
-		time.Now(), c.UserId)
-	if err != nil {
-		return -1, err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return -1, err
-	}
-	return id, nil
+	return lastInsertId, nil
 }
 
 /* Update DB */
 // UpVoteComment
 func UpVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where id=?")
+	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where id=$1")
 	if err != nil {
 		return err
 	}
@@ -173,7 +165,7 @@ func UpVoteComment(db *sql.DB, id int) error {
 
 // DownVoteComment downvotes a row
 func DownVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where id=?")
+	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where id=$1")
 	if err != nil {
 		return err
 	}
@@ -186,7 +178,7 @@ func DownVoteComment(db *sql.DB, id int) error {
 
 /* Delete */
 func Delete(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("delete FROM comments WHERE id=?")
+	stmt, err := db.Prepare("delete FROM comments WHERE id=$1")
 	if err != nil {
 		return err
 	}
