@@ -9,6 +9,7 @@ import (
 
 func main() {
 	db, err := database.InitDB()
+	defer db.Close() // This ought to have been a while ago
 	if err != nil {
 		fmt.Println("Error DB", err)
 	}

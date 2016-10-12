@@ -34,31 +34,31 @@ func CreateTable(db *sql.DB) error {
 	// user field is for related user id
 	comment_schema := `
 CREATE TABLE IF NOT EXISTS comments(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     lat FLOAT NOT NULL,
     lon FLOAT NOT NULL,
     upvotes INTEGER DEFAULT 0,
     downvotes INTEGER DEFAULT 0,
-    date DATETIME,
-    user INTEGER DEFAULT 0
+    date TIMESTAMP,
+    uid INTEGER DEFAULT 0
 );
 `
 	// DON't forget to hash password
-	user_schema := `
-CREATE TABLE IF NOT EXISTS users(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    password TEXT,
-    date DATETIME
-);
-`
-	_, err := db.Exec(user_schema)
-	if err != nil {
-		return err
-	}
-	_, err = db.Exec(comment_schema)
+	//user_schema := `
+	//CREATE TABLE IF NOT EXISTS users(
+	//    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	//    name TEXT NOT NULL,
+	//    password TEXT,
+	//    date DATETIME
+	//);
+	//`
+	//_, err := db.Exec(user_schema)
+	//if err != nil {
+	//return err
+	//}
+	_, err := db.Exec(comment_schema)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS users(
 func MockComment(db *sql.DB) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO comments(title, " +
 		"description, lat, lon," +
-		"date, user)VALUES($1,$2,$3,$4,$5,$6)")
+		"date, uid)VALUES($1,$2,$3,$4,$5,$6)")
 	if err != nil {
 		return -1, err
 	}
@@ -142,7 +142,7 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
-	err := db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,user) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
+	err := db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,uid) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
 		return -1, err
 	}
