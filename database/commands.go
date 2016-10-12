@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/bmizerany/pq"
+	"github.com/bmizerany/pq"
 )
 
 const (
