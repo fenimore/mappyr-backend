@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/polypmer/mappyr",
+	"ImportPath": "github.com/polypmer/mappyr-backend",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
 	"Deps": [
