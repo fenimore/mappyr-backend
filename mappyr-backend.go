@@ -1,4 +1,4 @@
-package mappyr-backend
+package main
 
 import (
 	"fmt"
