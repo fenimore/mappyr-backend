@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	DB_USER     = "mappyr"
-	DB_PASSWORD = "mappass"
-	DB_NAME     = "mappyr"
+	DB_USER     = "kpssujtcjeylzx"
+	DB_PASSWORD = "By5bPQQibYr5KDkBu-E9nU5eaO"
+	DB_NAME     = "dcnd0p0l81l0dr"
 )
 
 /* Database Helpers */
