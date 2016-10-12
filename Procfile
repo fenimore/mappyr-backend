@@ -1,1 +1,1 @@
-web: mappyr -port=$PORT
+web: mappyr -port=8080
