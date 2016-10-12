@@ -20,7 +20,7 @@ func Serve(connection *sql.DB, port string) { // pass in connection
 
 	router := NewRouter()
 	fmt.Println("Should be", port)
-	err := http.ListenAndServe(os.Getenv("PORT"), router)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	if err != nil { // should I log fatal??
 		fmt.Println(err)
 	}
