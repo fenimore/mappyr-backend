@@ -23,7 +23,7 @@ func InitDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
+	//defer db.Close()
 	return db, nil
 }
 
@@ -80,10 +80,10 @@ func MockComment(db *sql.DB) (int64, error) {
 	if err != nil {
 		return -1, err
 	}
-	//id, err := res.LastInsertId()
-	//if err != nil {
-	//	return -1, err
-	//}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return -1, err
+	}
 	return id, nil
 }
 
@@ -140,9 +140,9 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 
 /* DB Write */
 // WriteComment
-func WriteComment(db *sql.DB, c Comment) (int64, error) {
+func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
-	err = db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,user) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
+	err := db.QueryRow("INSERT INTO comments(title,description,lat, lon,date,user) VALUES($1,$2,$3,$4,$5) returning id;", c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
 		return -1, err
 	}

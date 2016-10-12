@@ -15,7 +15,7 @@ func main() {
 
 	err = database.CreateTable(db)
 	if err != nil {
-		fmt.Println("Creation erro", err)
+		fmt.Println("Creation error", err)
 	}
 
 	api.Serve(db)

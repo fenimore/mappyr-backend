@@ -10,7 +10,7 @@ import (
 // Description
 // UPvote and Downvote
 type Comment struct {
-	Id          int64     `json:"id"`
+	Id          int       `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Lat         float64   `json:"latitude"`
@@ -18,7 +18,7 @@ type Comment struct {
 	Upvotes     int       `json:"upvotes"`
 	Downvotes   int       `json:"downvotes"`
 	Date        time.Time `json:"date"`
-	UserId      int64     `json:"user-id"` // 0 for anon
+	UserId      int       `json:"user-id"` // 0 for anon
 }
 
 func (c *Comment) String() string {
@@ -27,7 +27,7 @@ func (c *Comment) String() string {
 }
 
 type User struct {
-	Id   int64     `json:"id"`
+	Id   int       `json:"id"`
 	Name string    `json:"username¨`
 	Date time.Time `json:"date"`
 	// One to Many relationshionship
