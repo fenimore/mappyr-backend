@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/polypmer/mappyr/database"
+	"github.com/polypmer/mappyr-backend/database"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
