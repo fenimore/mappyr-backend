@@ -3,18 +3,27 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/bmizerany/pq"
+)
+
+const (
+	DB_USER     = "mappyr"
+	DB_PASSWORD = "mappass"
+	DB_NAME     = "mappyr"
 )
 
 /* Database Helpers */
 // InitDB Opens a new sqlite3 db in path
 func InitDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./mappyr.db")
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
+	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
 		return nil, err
 	}
+	defer db.Close()
 	return db, nil
 }
 
@@ -57,10 +66,11 @@ CREATE TABLE IF NOT EXISTS users(
 }
 
 // MockComment inserts a fake comment for testing
+// Only Works for SQLITE
 func MockComment(db *sql.DB) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO comments(title, " +
 		"description, lat, lon," +
-		"date, user)values(?,?,?,?,?, ?)")
+		"date, user)VALUES($1,$2,$3,$4,$5,$6)")
 	if err != nil {
 		return -1, err
 	}
@@ -69,10 +79,10 @@ func MockComment(db *sql.DB) (int64, error) {
 	if err != nil {
 		return -1, err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return -1, err
-	}
+	//id, err := res.LastInsertId()
+	//if err != nil {
+	//	return -1, err
+	//}
 	return id, nil
 }
 
