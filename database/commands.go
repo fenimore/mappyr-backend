@@ -23,7 +23,7 @@ func InitDB() (*sql.DB, error) {
 	//url := os.Getenv("DATABASE_URL")
 	//connection, _ := pq.ParseURL(url) // HEROKU
 	// HEROKU: sslmode=require
-	connection += fmt.Sprintf(" user=%s password=%s dbname=%s sslmode=%s",
+	connection := fmt.Sprintf(" user=%s password=%s dbname=%s sslmode=%s",
 		DB_USER, DB_PASSWORD, DB_NAME, DB_SSL)
 
 	db, err := sql.Open("postgres", connection)
@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS comments(
 	//}
 	_, err := db.Exec(comment_schema)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	return nil

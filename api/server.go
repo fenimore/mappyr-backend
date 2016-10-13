@@ -18,7 +18,7 @@ func Serve(connection *sql.DB, port string) { // pass in connection
 	// get new router
 	router := NewRouter()
 	// get port
-	port = ":" + port
+	//port = ":" + port
 	fmt.Println("Serving On:", port)
 	// for HEROKU: ":"+os.Getenv("PORT")
 	err := http.ListenAndServe(port, router)
