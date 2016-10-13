@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"os"
 )
 
 // TODO:
@@ -16,11 +15,13 @@ var db *sql.DB
 func Serve(connection *sql.DB, port string) { // pass in connection
 	// set connection to global
 	db = connection
-	fmt.Println("Serving API on port 8080")
-
+	// get new router
 	router := NewRouter()
-	fmt.Println("Should be", port)
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
+	// get port
+	port = ":" + port
+	fmt.Println("Serving On:", port)
+	// for HEROKU: ":"+os.Getenv("PORT")
+	err := http.ListenAndServe(port, router)
 	if err != nil { // should I log fatal??
 		fmt.Println(err)
 	}

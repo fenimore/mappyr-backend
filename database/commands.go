@@ -4,24 +4,27 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/bmizerany/pq"
+	_ "github.com/bmizerany/pq"
+	//"github.com/bmizerany/pq" // HEROKU NEEDS FOR PARSING
 )
 
 const (
-	DB_USER     = "kpssujtcjeylzx"
-	DB_PASSWORD = "By5bPQQibYr5KDkBu-E9nU5eaO"
-	DB_NAME     = "dcnd0p0l81l0dr"
+	DB_USER     = "mappyr"  //"kpssujtcjeylzx"
+	DB_PASSWORD = "mappass" //"By5bPQQibYr5KDkBu-E9nU5eaO"
+	DB_NAME     = "mappyr"  //"dcnd0p0l81l0dr"
+	DB_SSL      = "disable" // "require"
 )
 
 /* Database Helpers */
 // InitDB Opens a new sqlite3 db in path
 func InitDB() (*sql.DB, error) {
-	url := os.Getenv("DATABASE_URL")
-	connection, _ := pq.ParseURL(url)
-	connection += fmt.Sprintf(" user=%s password=%s dbname=%s sslmode=require", DB_USER, DB_PASSWORD, DB_NAME)
+	//url := os.Getenv("DATABASE_URL")
+	//connection, _ := pq.ParseURL(url) // HEROKU
+	// HEROKU: sslmode=require
+	connection += fmt.Sprintf(" user=%s password=%s dbname=%s sslmode=%s",
+		DB_USER, DB_PASSWORD, DB_NAME, DB_SSL)
 
 	db, err := sql.Open("postgres", connection)
 	if err != nil {
@@ -38,15 +41,15 @@ func CreateTable(db *sql.DB) error {
 	// user field is for related user id
 	comment_schema := `
 CREATE TABLE IF NOT EXISTS comments(
-    id SERIAL PRIMARY KEY,
+    comment_id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     lat FLOAT NOT NULL,
     lon FLOAT NOT NULL,
     upvotes INTEGER DEFAULT 0,
     downvotes INTEGER DEFAULT 0,
-    date TIMESTAMP,
-    uid INTEGER DEFAULT 0
+    pub_date TIMESTAMP,
+    user_id INTEGER DEFAULT 0
 );
 `
 	// DON't forget to hash password
@@ -69,33 +72,12 @@ CREATE TABLE IF NOT EXISTS comments(
 	return nil
 }
 
-// MockComment inserts a fake comment for testing
-// Only Works for SQLITE
-// DEPRECATED
-func MockComment(db *sql.DB) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO comments(title, " +
-		"description, lat, lon," +
-		"date, uid)VALUES($1,$2,$3,$4,$5,$6)")
-	if err != nil {
-		return -1, err
-	}
-	res, err := stmt.Exec("Great food!", "Although crap service",
-		"41.353", "-71.113", time.Now(), 0)
-	if err != nil {
-		return -1, err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return -1, err
-	}
-	return id, nil
-}
-
 /* DB read */
 
 // ReadComment reads a comment from the datase with an id.
 func ReadComment(db *sql.DB, id int) (Comment, error) {
-	rows, err := db.Query("select * from comments where id = $1", id)
+	rows, err := db.Query("select * from comments"+
+		" where comment_id = $1", id)
 	c := Comment{}
 	if err != nil {
 		return c, err
@@ -146,8 +128,8 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
-	err := db.QueryRow("INSERT INTO comments(title,description,lat,lon,date,uid)"+
-		" VALUES($1,$2,$3,$4,$5,$6) returning id;",
+	err := db.QueryRow("INSERT INTO comments(title,description,lat,lon,date,user_id)"+
+		" VALUES($1,$2,$3,$4,$5,$6) returning comment_id;",
 		c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
 		return -1, err
@@ -158,7 +140,7 @@ func WriteComment(db *sql.DB, c Comment) (int, error) {
 /* Update DB */
 // UpVoteComment
 func UpVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where id=$1")
+	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where comment_id=$1")
 	if err != nil {
 		return err
 	}
@@ -171,7 +153,7 @@ func UpVoteComment(db *sql.DB, id int) error {
 
 // DownVoteComment downvotes a row
 func DownVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where id=$1")
+	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where comment_id=$1")
 	if err != nil {
 		return err
 	}
@@ -184,7 +166,7 @@ func DownVoteComment(db *sql.DB, id int) error {
 
 /* Delete */
 func Delete(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("delete FROM comments WHERE id=$1")
+	stmt, err := db.Prepare("delete FROM comments WHERE comment_id=$1")
 	if err != nil {
 		return err
 	}
