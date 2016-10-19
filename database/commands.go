@@ -231,3 +231,40 @@ func ReadUsers(db *sql.DB) ([]User, error) {
 	rows.Close() // Redundant is good
 	return users, nil
 }
+
+/* Votes */
+// Search for votes by comments
+func TallyVotes(comment_id int, db *sql.DB) error {
+	downRows, err := db.Query("select * from upvotes where comment_id = $1", comment_id)
+	upRows, err := db.Query("select * from upvotes where comment_id = $1", comment_id)
+	if err != nil {
+		return err
+	}
+	defer upRows.Close()
+	defer downRows.Close()
+
+	ups := make([]Upvote, 0)
+	downs := make([]Downvote, 0)
+
+	for upRows.Next() {
+		v := Upvote{}
+		err = upRows.Scan(&v.Comment, &v.User)
+		if err != nil {
+			return err
+		}
+		ups = append(ups, v)
+	}
+	for downRows.Next() {
+		v := Downvote{}
+		err = downRows.Scan(&v.Comment, &v.User)
+		if err != nil {
+			return err
+		}
+		downs = append(downs, v)
+	}
+	upRows.Close()
+	downRows.Close()
+	fmt.Println(ups[0])
+	fmt.Println(downs[0])
+	return nil
+}

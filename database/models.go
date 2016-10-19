@@ -72,11 +72,11 @@ func MockUsers(db *sql.DB) error {
 }
 
 func MockUpvote(db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO upvotes(comment_id, user_id)VALUES($1, $2)")
+	stmt, err := db.Prepare("INSERT INTO downvotes(comment_id, user_id)VALUES($1, $2)")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(1, 1)
+	_, err = stmt.Exec(1, 2)
 	if err != nil {
 		fmt.Println(err)
 	}
