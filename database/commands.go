@@ -50,51 +50,51 @@ CREATE TABLE IF NOT EXISTS comments(
     upvotes INTEGER DEFAULT 0,
     downvotes INTEGER DEFAULT 0,
     pub_date TIMESTAMP,
-    user_id INTEGER REFERENCES users (user_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
+    user_id int REFERENCES users (user_id) ON UPDATE CASCADE ON DELETE CASCADE
+);`
 
-// TODO: hash passes and salt dat up`
-	users_schema := `
+	// TODO: hash passes and salt dat up
+	user_schema := `
 CREATE TABLE IF NOT EXISTS users(
     user_id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     password VARCHAR(50),
     create_date TIMESTAMP,
-    email VARCHAR(50),
+    email VARCHAR(50)
 )
 `
 	upvote_schema := `
 CREATE TABLE IF NOT EXISTS upvotes(
-    comment_id INTEGER REFERECNCES comments (comment_id) ON UPDATE CASCADE,
-    user_id    INTEGER REFERECNES  users    (user_id),
+    comment_id int REFERENCES comments (comment_id) ON UPDATE CASCADE,
+    user_id    int REFERENCES  users    (user_id),
     CONSTRAINT upvote_key PRIMARY KEY (comment_id, user_id)
 )
 `
 	downvote_schema := `
 CREATE TABLE IF NOT EXISTS downvotes(
-    comment_id INTEGER REFERECNCES comments (comment_id) ON UPDATE CASCADE,
-    user_id    INTEGER REFERECNES  users    (user_id),
+    comment_id int REFERENCES comments (comment_id) ON UPDATE CASCADE,
+    user_id    int REFERENCES  users    (user_id),
     CONSTRAINT downvote_key PRIMARY KEY (comment_id, user_id)
 )
 `
-	_, err := db.Exec(users_schema)
+	_, err := db.Exec(user_schema)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("user error", err)
 		return err
 	}
-	_, err := db.Exec(upvote_schema)
+	_, err = db.Exec(upvote_schema)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("upvote", err)
 		return err
 	}
-	_, err := db.Exec(downvote_schema)
+	_, err = db.Exec(downvote_schema)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("downvote", err)
 		return err
 	}
-	_, err := db.Exec(comments_schema)
+	_, err = db.Exec(comment_schema)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("comments", err)
 		return err
 	}
 	return nil
