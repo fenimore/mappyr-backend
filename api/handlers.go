@@ -116,12 +116,26 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 /* Update DB, Upvote and Downvote */
 // UpVote updates a comment and returns the voted comment
 func UpVote(w http.ResponseWriter, r *http.Request) {
+	var user_id int
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
-	token := r.Header["Authentication"][0]
-	id, err := AuthId(token)
-	fmt.Println(id, err)
-	user_id := 1 // TODO: Take User ID from Auth Token
+	if _, ok := r.Header["Authentication"]; ok {
+		token := r.Header["Authentication"][0]
+		user_id, err = AuthId(token)
+		if err != nil {
+			w.Header().Set("Content-Type",
+				"application/json;charset=UTF-8")
+			w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		}
+	} else {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -282,17 +296,22 @@ func AuthId(token string) (int, error) {
 	}
 	// Retrieve claims
 	var claims map[string]interface{}
-	if claims, ok := parsed.Claims.(jwt.MapClaims); ok && parsed.Valid {
-		fmt.Println(claims) // pass into context
+	var ok bool
+	if claims, ok = parsed.Claims.(jwt.MapClaims); ok && parsed.Valid {
+		//fmt.Println(claims) // pass into context
 	} else {
 		fmt.Println("Not OK claims", err)
 		return 0, errors.New("Unparsable token")
 	}
-	id, ok := claims["user-id"].(int)
+	id, ok := claims["user-id"].(string)
 	if !ok {
 		return 0, errors.New("The token couldn't find you're id")
 	} else {
-		return id, nil
+		uid, err := strconv.Atoi(id)
+		if err != nil {
+			return 0, errors.New("This isn't a proper ID")
+		}
+		return uid, nil
 	}
 }
 

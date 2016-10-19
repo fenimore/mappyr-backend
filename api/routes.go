@@ -60,13 +60,13 @@ var routes = Routes{
 	}, // UPDATE
 	Route{
 		"UpVote",
-		"POST",
+		"GET",
 		"/upvote/{comment_id}",
 		UpVote,
 	},
 	Route{
 		"DownVote",
-		"POST",
+		"GET",
 		"/downvote/{comment_id}",
 		DownVote,
 	},
