@@ -252,7 +252,7 @@ func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
 	return votes, nil
 }
 
-func UserVotes(user_id, db *sql.DB) ([]Vote, error) {
+func UserVotes(user_id int, db *sql.DB) ([]Vote, error) {
 	votes := make([]Vote, 0)
 	rows, err := db.Query("select * from votes where user_id = $1", user_id)
 	if err != nil {
@@ -272,7 +272,7 @@ func UserVotes(user_id, db *sql.DB) ([]Vote, error) {
 	return votes, nil
 }
 
-func UserComments(user_id, db *sql.DB) ([]Comment, error) {
+func UserComments(user_id int, db *sql.DB) ([]Comment, error) {
 	comments := make([]Comment, 0)
 	rows, err := db.Query("select * from comments where user_id = $1", user_id)
 	if err != nil {
@@ -293,7 +293,7 @@ func UserComments(user_id, db *sql.DB) ([]Comment, error) {
 		comments = append(comments, c)
 	}
 	rows.Close()
-	return votes, nil
+	return comments, nil
 }
 
 // TallyVotes Search for votes by comments

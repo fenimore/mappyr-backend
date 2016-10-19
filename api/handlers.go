@@ -322,8 +322,8 @@ func ShowUsers(w http.ResponseWriter, r *http.Request) {
 
 func UserVotes(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, ok := strconv.Atoi(vars["id"]) // this should be ID in production
-	if !ok {
+	id, err := strconv.Atoi(vars["id"]) // this should be ID in production
+	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
@@ -344,8 +344,8 @@ func UserVotes(w http.ResponseWriter, r *http.Request) {
 
 func UserComments(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, ok := strconv.Atoi(vars["id"]) // this should be ID in production
-	if !ok {
+	id, err := strconv.Atoi(vars["id"]) // this should be ID in production
+	if err != nil {
 		http.NotFound(w, r)
 		return
 	}

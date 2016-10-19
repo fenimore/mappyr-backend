@@ -49,7 +49,7 @@ var routes = Routes{
 	Route{
 		"ShowComments",
 		"GET",
-		"/comments",
+		"/all/comments",
 		ShowComments,
 	}, // CREATE
 	Route{
@@ -82,6 +82,18 @@ var routes = Routes{
 		"GET",
 		"/users",
 		ShowUsers,
+	},
+	Route{
+		"UserVotes",
+		"GET",
+		"/votes/{id}",
+		UserVotes,
+	},
+	Route{
+		"UserComments",
+		"GET",
+		"/comments/{id}",
+		UserComments,
 	},
 	// TODO: Create
 	// Can't create unless username doesn't exits
