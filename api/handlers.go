@@ -70,9 +70,33 @@ func ShowComments(w http.ResponseWriter, r *http.Request) {
 // NewComment Writes a new comment to db
 // If no user is specified, use 0 for id
 func NewComment(w http.ResponseWriter, r *http.Request) {
+	var user_id int
+	var err error
 	// This is taking a POST method
-	// TODO: Take User ID from Auth Token
+	// Authentication from Token to get User ID
 	var comment database.Comment
+	if _, ok := r.Header["Authentication"]; ok {
+		token := r.Header["Authentication"][0]
+		user_id, err = AuthId(token)
+		if err != nil {
+			w.Header().Set("Content-Type",
+				"application/json;charset=UTF-8")
+			w.WriteHeader(http.StatusNotFound) // No User
+			err = json.NewEncoder(w).Encode(err)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	} else {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	// Body has the JSON for comment info (including LAT and LONG)
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		fmt.Println(err)
@@ -95,14 +119,14 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 	}
 	// Now I have a comment json object
 	comment.Date = time.Now()
-	// Check for Authentication, and in that case,
+	comment.UserId = user_id
 	// Add the user to the comment
 
-	id, err := database.WriteComment(db, comment)
+	_, err = database.WriteComment(db, comment)
 	if err != nil {
 		fmt.Println(err)
 	}
-	comment.Id = id
+
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 
@@ -133,7 +157,7 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Header().Set("Content-Type",
 			"application/json;charset=UTF-8")
-		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		w.WriteHeader(http.StatusForbidden) // Doesn't exist
 		err = json.NewEncoder(w).Encode(err)
 		if err != nil {
 			fmt.Println(err)
@@ -181,7 +205,7 @@ func DownVote(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Header().Set("Content-Type",
 			"application/json;charset=UTF-8")
-		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		w.WriteHeader(http.StatusForbidden) // Doesn't exist
 		err = json.NewEncoder(w).Encode(err)
 		if err != nil {
 			fmt.Println(err)
