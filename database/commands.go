@@ -222,9 +222,46 @@ func ReadUsers(db *sql.DB) ([]User, error) {
 }
 
 /* Votes */
-func CommentVotes(comment_id, db *sql.DB) {
-	//	downRows, err := db.Query("select * from votes where comment_id = $1", comment_id)
+// CommentVotes returns a slice of Vote structs according
+// to a passed in comment ID
+func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
+	votes := make([]Vote, 0)
+	rows, err := db.Query("select * from votes where comment_id = $1", comment_id)
+	if err != nil {
+		return votes, err
+	}
+	defer rows.Close()
 
+	for rows.Next() {
+		v := Vote{}
+		err = rows.Scan(&v.Comment, &v.User, &v.Up)
+		if err != nil {
+			return err
+		}
+		votes = append(votes, v)
+	}
+	rows.Close()
+	return votes, nil
+}
+
+func UserVotes(user_id, db *sql.DB) ([]Votes, err) {
+	votes := make([]Vote, 0)
+	rows, err := db.Query("select * from votes where user_id = $1", user_id)
+	if err != nil {
+		return votes, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		v := Vote{}
+		err = rows.Scan(&v.Comment, &v.User, &v.Up)
+		if err != nil {
+			return err
+		}
+		votes = append(votes, v)
+	}
+	rows.Close()
+	return votes, nil
 }
 
 // TallyVotes Search for votes by comments

@@ -22,18 +22,20 @@ func Serve(connection *sql.DB, port string) { // pass in connection
 	//port = ":" + port
 	fmt.Println("Serving On:", port)
 
-	e := database.MockVote(db) // database.MockUsers(db)
-	if e != nil {
-		fmt.Println(e)
-	}
-	e = database.MockUsers(db)
-	if e != nil {
-		fmt.Println(e)
-	}
-	e = database.TallyVotes(db)
-	if e != nil {
-		fmt.Println(e)
-	}
+	/* MOCK DATA
+	           	e := database.MockVote(db) // database.MockUsers(db)
+			if e != nil {
+				fmt.Println(e)
+			}
+			e = database.MockUsers(db)
+			if e != nil {
+				fmt.Println(e)
+			}
+			e = database.TallyVotes(db)
+			if e != nil {
+				fmt.Println(e)
+			}
+	*/
 
 	// for HEROKU: ":"+os.Getenv("PORT")
 	err := http.ListenAndServe(port, router)
