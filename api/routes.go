@@ -75,7 +75,18 @@ var routes = Routes{
 		"GET",
 		"/delete/{id}",
 		DeleteComment,
-	}, /* Authentication */
+	},
+	/* User Routes */
+	Route{
+		"ShowUsers",
+		"GET",
+		"/users",
+		ShowUsers,
+	},
+	// TODO: Create
+	// Can't create unless username doesn't exits
+	// TODO: Delete User
+	/* Authentication */
 	Route{
 		"Login",
 		"POST",

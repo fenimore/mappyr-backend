@@ -298,3 +298,18 @@ func NewToken(w http.ResponseWriter, r *http.Request) {
 	// or write a json with the cookie
 	w.Write([]byte(signedToken))
 }
+
+/* Users */
+// ShowUsers collects all users
+func ShowUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := database.ReadUsers(db)
+	if err != nil {
+		fmt.Println(err)
+	}
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(users)
+	if err != nil {
+		fmt.Fprintf(w, "Error JSON encoding %s", err)
+	}
+}

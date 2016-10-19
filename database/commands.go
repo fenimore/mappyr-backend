@@ -204,3 +204,30 @@ func Delete(db *sql.DB, id int) error {
 	}
 	return nil
 }
+
+/* Users */
+
+// ReadUsers returns all comments
+func ReadUsers(db *sql.DB) ([]User, error) {
+	users := make([]User, 0)
+
+	stmt := "SELECT * FROM users"
+	rows, err := db.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		u := User{}
+		err = rows.Scan(&u.Id, &u.Name,
+			&u.Password,
+			&u.Date, &u.Email)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	rows.Close() // Redundant is good
+	return users, nil
+}
