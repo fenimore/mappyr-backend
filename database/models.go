@@ -53,13 +53,13 @@ func MockUsers(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec("Simone", "lulz",
-		time.Now(), "simone@what.com")
+	_, err = stmt.Exec("Fenimore", "lulz",
+		time.Now(), "fen@what.com")
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = stmt.Exec("AnonBOTTTT", "password",
-		time.Now(), "anon@what.com")
+	_, err = stmt.Exec("Numba2", "password",
+		time.Now(), "Dooom@what.com")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -78,12 +78,12 @@ func MockVote(db *sql.DB) error {
 	}
 
 	// True means is upvote
-	_, err = stmt.Exec(1, 1, true)
+	_, err = stmt.Exec(3, 1, true)
 	if err != nil {
 		fmt.Println(err)
 	}
 	// True means is upvote
-	_, err = stmt.Exec(1, 2, false)
+	_, err = stmt.Exec(3, 2, false)
 	if err != nil {
 		fmt.Println(err)
 	}

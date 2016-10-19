@@ -76,16 +76,19 @@ CREATE TABLE IF NOT EXISTS votes(
 		fmt.Println("user error", err)
 		return err
 	}
-	_, err = db.Exec(vote_schema)
-	if err != nil {
-		fmt.Println("vote", err)
-		return err
-	}
+
 	_, err = db.Exec(comment_schema)
 	if err != nil {
 		fmt.Println("comments", err)
 		return err
 	}
+
+	_, err = db.Exec(vote_schema)
+	if err != nil {
+		fmt.Println("vote", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -174,7 +177,7 @@ func VoteComment(db *sql.DB, comment_id, user_id int, up bool) error {
 		if err != nil {
 			return err
 		}
-		stmt.Exec(comment_id
+		stmt.Exec(comment_id)
 	} else {
 		stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 " +
 			"where comment_id=$1")
