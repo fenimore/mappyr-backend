@@ -156,7 +156,7 @@ func WriteComment(db *sql.DB, c Comment) (int, error) {
 
 /* Update DB */
 // UpVoteComment
-func Vote(db *sql.DB, comment_id, user_id int, up bool) error {
+func VoteComment(db *sql.DB, comment_id, user_id int, up bool) error {
 	stmt, err := db.Prepare("INSERT INTO votes(comment_id, user_id, up)VALUES($1, $2, $3)")
 	if err != nil {
 		return err
@@ -223,7 +223,7 @@ func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
 		v := Vote{}
 		err = rows.Scan(&v.Comment, &v.User, &v.Up)
 		if err != nil {
-			return err
+			return votes, err
 		}
 		votes = append(votes, v)
 	}
@@ -231,7 +231,7 @@ func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
 	return votes, nil
 }
 
-func UserVotes(user_id, db *sql.DB) ([]Votes, err) {
+func UserVotes(user_id, db *sql.DB) ([]Vote, error) {
 	votes := make([]Vote, 0)
 	rows, err := db.Query("select * from votes where user_id = $1", user_id)
 	if err != nil {
@@ -243,7 +243,7 @@ func UserVotes(user_id, db *sql.DB) ([]Votes, err) {
 		v := Vote{}
 		err = rows.Scan(&v.Comment, &v.User, &v.Up)
 		if err != nil {
-			return err
+			return votes, err
 		}
 		votes = append(votes, v)
 	}

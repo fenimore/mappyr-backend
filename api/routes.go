@@ -61,13 +61,13 @@ var routes = Routes{
 	Route{
 		"UpVote",
 		"GET",
-		"/upvote/{id}",
+		"/upvote/{comment_id}/{user_id}",
 		UpVote,
 	},
 	Route{
 		"DownVote",
 		"GET",
-		"/downvote/{id}",
+		"/downvote/{comment_id}/{user_id}",
 		DownVote,
 	},
 	Route{
