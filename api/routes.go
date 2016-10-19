@@ -38,7 +38,8 @@ var routes = Routes{
 		"GET",
 		"/",
 		Index,
-	}, // READ
+	}, /* Database Routes */
+	// READ
 	Route{
 		"ShowComment",
 		"GET",
@@ -74,7 +75,7 @@ var routes = Routes{
 		"GET",
 		"/delete/{id}",
 		DeleteComment,
-	}, // AUTH
+	}, /* Authentication */
 	Route{
 		"Login",
 		"POST",
@@ -86,5 +87,11 @@ var routes = Routes{
 		"GET",
 		"/token/{id}",
 		NewToken,
+	},
+	Route{
+		"ParseToken",
+		"GET",
+		"/parse/{token}",
+		ParseToken,
 	},
 }

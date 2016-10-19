@@ -219,6 +219,45 @@ func Validate(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// ParseToken returns the username from an encrypted token
+func ParseToken(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	token, ok := vars["token"] // very niave to just pass into route
+	// this should be in the headers
+	if !ok {
+		fmt.Println("wheres your token")
+	}
+
+	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method")
+			// should this be HMAC instead of HS256?
+		}
+		return signingKey, nil
+	})
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	// Retrieve claims
+	var claims map[string]interface{}
+	if claims, ok = parsed.Claims.(jwt.MapClaims); ok && parsed.Valid {
+		fmt.Println(claims) // pass into context
+	} else {
+		fmt.Println("Not OK claims", err)
+		http.NotFound(w, r)
+		return
+	}
+	for v, k := range claims {
+		fmt.Println(v, k)
+
+	}
+	//fmt.Println(claims["username"])
+	str := fmt.Sprint(claims["username"])
+	w.Write([]byte(str))
+
+}
+
 // NewToken
 func NewToken(w http.ResponseWriter, r *http.Request) {
 	// in production I'd authenticate against a database before setting the token
