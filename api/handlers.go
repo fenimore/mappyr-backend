@@ -122,11 +122,11 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 	comment.UserId = user_id
 	// Add the user to the comment
 
-	_, err = database.WriteComment(db, comment)
+	id_, err := database.WriteComment(db, comment)
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	commend.Id = id
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 
@@ -265,15 +265,70 @@ var signingKey = []byte("secret key")
 
 type Claims struct {
 	UserId string `json:"user-id"`
+
 	jwt.StandardClaims
 }
 
-// Login authenticates user using jwt token
-func Login(w http.ResponseWriter, r *http.Request) {
+// Signup adds a new user to the database.
+func Signup(w http.ResponseWriter, r *http.Request) {
+	user := database.User{}
+	// Hash here?
+	// Add password and username
+	// Then login lol
+	// Get JSON data
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = r.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Unmarshal, stick into my struct
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) //422
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	user.Date = time.Now()
+	//import "crypto/sha1"
+	//h := sha1.New()
+	//io.WriteString(h, "password")
+	//fmt.Printf("% x", h.Sum(nil))
+	// CONVERT TO STRING, from uint18?
+	// user.Password = HASHED PASSWORD
+	id, err := database.SignUp(db, user)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// TODO: Get the id
+	user.Id = id
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
 
+	// Feed it back into the response Writer
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
-// Logout deletes the cookie
+// Login authenticates user and returns the token
+// this token must be included in the Header Authentication:
+// field for Posting and Voting.
+func Login(w http.ResponseWriter, r *http.Request) {
+	// POST JSON
+	// Hash of pass
+	// Check against password
+	// return token
+}
+
+// Logout deletes the cookie.
+// There is no cookie. So this doesn't make any sense.
 func Logout(w http.ResponseWriter, r *http.Request) {
 
 }
@@ -283,47 +338,8 @@ func Validate(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// ParseToken returns the username from an encrypted token
-// DEPRECTATED!!
-func ParseToken(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	token, ok := vars["token"] // very niave to just pass into route
-	// this should be in the headers
-	if !ok {
-		fmt.Println("wheres your token")
-	}
-
-	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method")
-			// should this be HMAC instead of HS256?
-		}
-		return signingKey, nil
-	})
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
-	// Retrieve claims
-	var claims map[string]interface{}
-	if claims, ok = parsed.Claims.(jwt.MapClaims); ok && parsed.Valid {
-		fmt.Println(claims) // pass into context
-	} else {
-		fmt.Println("Not OK claims", err)
-		http.NotFound(w, r)
-		return
-	}
-	for v, k := range claims {
-		fmt.Println(v, k)
-
-	}
-	//fmt.Println(claims["username"])
-	str := fmt.Sprint(claims["username"])
-	w.Write([]byte(str))
-
-}
-
 // AuthId takes a token and returns the user ID encrypted.
+// Now, this can't be faked because I have the secret signing key.
 func AuthId(token string) (int, error) {
 	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {

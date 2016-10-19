@@ -78,6 +78,12 @@ var routes = Routes{
 	},
 	/* User Routes */
 	Route{
+		"SignUp",
+		"POST",
+		"/signup",
+		Signup,
+	},
+	Route{
 		"ShowUsers",
 		"GET",
 		"/users",

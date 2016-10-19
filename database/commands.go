@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS comments(
 );`
 
 	// TODO: hash passes and salt dat up
+	// TODO: Make username unique
 	user_schema := `
 CREATE TABLE IF NOT EXISTS users(
     user_id SERIAL PRIMARY KEY,
@@ -203,6 +204,18 @@ func DeleteComment(db *sql.DB, id int) error {
 }
 
 /* Users */
+
+func SignUp(db *sql.DB, u User) (int, error) {
+	var lastInsertId int
+	err := db.QueryRow("INSERT INTO users(user_name, password, create_date, email)"+
+		" VALUES($1,$2,$3,$4) returning user_id;",
+		u.Name, u.Password, time.Now(),
+		u.Email).Scan(&lastInsertId)
+	if err != nil {
+		return -1, err
+	}
+	return lastInsertId, nil
+}
 
 // ReadUsers returns all comments
 func ReadUsers(db *sql.DB) ([]User, error) {
