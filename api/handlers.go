@@ -9,12 +9,15 @@ import (
 	"strconv"
 	"time"
 
+	"errors"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/polypmer/mappyr-backend/database"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
+
+	//fmt.Println(r.Header["Authentication"])
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 
 	w.WriteHeader(http.StatusOK)
@@ -115,6 +118,9 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 func UpVote(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
+	token := r.Header["Authentication"][0]
+	id, err := AuthId(token)
+	fmt.Println(id, err)
 	user_id := 1 // TODO: Take User ID from Auth Token
 	if err != nil {
 		fmt.Println(err)
@@ -128,7 +134,7 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound) // Doesn't exist
 		err = json.NewEncoder(w).Encode(err)
 		if err != nil {
-			Gfmt.Println(err)
+			fmt.Println(err)
 		}
 	} else {
 		c, _ := database.ReadComment(db, comment_id)
@@ -203,7 +209,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 var signingKey = []byte("secret key")
 
 type Claims struct {
-	Username string `json:"username"`
+	UserId string `json:"user-id"`
 	jwt.StandardClaims
 }
 
@@ -223,6 +229,7 @@ func Validate(w http.ResponseWriter, r *http.Request) {
 }
 
 // ParseToken returns the username from an encrypted token
+// DEPRECTATED!!
 func ParseToken(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	token, ok := vars["token"] // very niave to just pass into route
@@ -261,15 +268,40 @@ func ParseToken(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// AuthId takes a token and returns the user ID encrypted.
+func AuthId(token string) (int, error) {
+	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method")
+			// should this be HMAC instead of HS256?
+		}
+		return signingKey, nil
+	})
+	if err != nil {
+		return 0, nil
+	}
+	// Retrieve claims
+	var claims map[string]interface{}
+	if claims, ok := parsed.Claims.(jwt.MapClaims); ok && parsed.Valid {
+		fmt.Println(claims) // pass into context
+	} else {
+		fmt.Println("Not OK claims", err)
+		return 0, errors.New("Unparsable token")
+	}
+	id, ok := claims["user-id"].(int)
+	if !ok {
+		return 0, errors.New("The token couldn't find you're id")
+	} else {
+		return id, nil
+	}
+}
+
 // NewToken
 func NewToken(w http.ResponseWriter, r *http.Request) {
 	// in production I'd authenticate against a database before setting the token
 
 	vars := mux.Vars(r)
-	id, ok := vars["id"] // strconv.Atoi(vars["id"]) // this should be ID in production
-	if !ok {
-		fmt.Println("NewToken ID error")
-	}
+	id := vars["id"] // strconv.Atoi(vars["id"]) // this should be ID in production
 
 	expireToken := time.Now().Add(time.Hour * 1).Unix()
 	expireCookie := time.Now().Add(time.Hour * 1)
