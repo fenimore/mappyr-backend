@@ -29,16 +29,11 @@ func (c *Comment) String() string {
 		c.Id, c.Title, c.Upvotes, c.Lat, c.Lon)
 }
 
-type Upvote struct {
-	Comment int `json:"comment_id"`
-	User    int `json:"user_id"`
-	Key     int `json:"key"`
-}
-
-type Downvote struct {
-	Comment int `json:"comment_id"`
-	User    int `json:"user_id"`
-	Key     int `json:"key"`
+type Vote struct {
+	Comment int  `json:"comment_id"`
+	User    int  `json:"user_id"`
+	Up      bool `json:"up"`
+	Key     int  `json:"key"`
 }
 
 type User struct {
@@ -58,25 +53,37 @@ func MockUsers(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec("Fenimore", "H2cA45x090",
-		time.Now(), "me@what.com")
+	_, err = stmt.Exec("Simone", "lulz",
+		time.Now(), "simone@what.com")
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = stmt.Exec("Geffry", "password",
-		time.Now(), "he@what.com")
+	_, err = stmt.Exec("AnonBOTTTT", "password",
+		time.Now(), "anon@what.com")
 	if err != nil {
 		fmt.Println(err)
 	}
 	return nil
 }
 
-func MockUpvote(db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO downvotes(comment_id, user_id)VALUES($1, $2)")
+func MockVote(db *sql.DB) error {
+	stmt, err := db.Prepare("INSERT INTO votes(comment_id, user_id, up)VALUES($1, $2, $3)")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(2, 2)
+	// True means is upvote
+	_, err = stmt.Exec(2, 2, true)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// True means is upvote
+	_, err = stmt.Exec(1, 1, true)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// True means is upvote
+	_, err = stmt.Exec(1, 2, false)
 	if err != nil {
 		fmt.Println(err)
 	}

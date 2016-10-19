@@ -63,18 +63,12 @@ CREATE TABLE IF NOT EXISTS users(
     email VARCHAR(50)
 )
 `
-	upvote_schema := `
-CREATE TABLE IF NOT EXISTS upvotes(
+	vote_schema := `
+CREATE TABLE IF NOT EXISTS votes(
     comment_id int REFERENCES comments (comment_id) ON UPDATE CASCADE,
     user_id    int REFERENCES  users    (user_id),
+    up         BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT upvote_key PRIMARY KEY (comment_id, user_id)
-)
-`
-	downvote_schema := `
-CREATE TABLE IF NOT EXISTS downvotes(
-    comment_id int REFERENCES comments (comment_id) ON UPDATE CASCADE,
-    user_id    int REFERENCES  users    (user_id),
-    CONSTRAINT downvote_key PRIMARY KEY (comment_id, user_id)
 )
 `
 	_, err := db.Exec(user_schema)
@@ -82,14 +76,9 @@ CREATE TABLE IF NOT EXISTS downvotes(
 		fmt.Println("user error", err)
 		return err
 	}
-	_, err = db.Exec(upvote_schema)
+	_, err = db.Exec(vote_schema)
 	if err != nil {
-		fmt.Println("upvote", err)
-		return err
-	}
-	_, err = db.Exec(downvote_schema)
-	if err != nil {
-		fmt.Println("downvote", err)
+		fmt.Println("vote", err)
 		return err
 	}
 	_, err = db.Exec(comment_schema)
@@ -233,38 +222,30 @@ func ReadUsers(db *sql.DB) ([]User, error) {
 }
 
 /* Votes */
-// Search for votes by comments
-func TallyVotes(comment_id int, db *sql.DB) error {
-	downRows, err := db.Query("select * from downvotes where comment_id = $1", comment_id)
-	upRows, err := db.Query("select * from upvotes where comment_id = $1", comment_id)
+func CommentVotes(comment_id, db *sql.DB) {
+	//	downRows, err := db.Query("select * from votes where comment_id = $1", comment_id)
+
+}
+
+// TallyVotes Search for votes by comments
+func TallyVotes(db *sql.DB) error {
+	rows, err := db.Query("select * from votes")
 	if err != nil {
 		return err
 	}
-	defer upRows.Close()
-	defer downRows.Close()
+	defer rows.Close()
 
-	ups := make([]Upvote, 0)
-	downs := make([]Downvote, 0)
+	votes := make([]Vote, 0)
 
-	for upRows.Next() {
-		v := Upvote{}
-		err = upRows.Scan(&v.Comment, &v.User)
+	for rows.Next() {
+		v := Vote{}
+		err = rows.Scan(&v.Comment, &v.User, &v.Up)
 		if err != nil {
 			return err
 		}
-		ups = append(ups, v)
+		votes = append(votes, v)
 	}
-	for downRows.Next() {
-		v := Downvote{}
-		err = downRows.Scan(&v.Comment, &v.User)
-		if err != nil {
-			return err
-		}
-		downs = append(downs, v)
-	}
-	upRows.Close()
-	downRows.Close()
-	fmt.Println(ups)
-	fmt.Println(downs)
+	rows.Close()
+	fmt.Println(votes)
 	return nil
 }
