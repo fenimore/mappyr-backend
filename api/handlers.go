@@ -119,6 +119,9 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 	var user_id int
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
+	if err != nil {
+		fmt.Println(err)
+	}
 	if _, ok := r.Header["Authentication"]; ok {
 		token := r.Header["Authentication"][0]
 		user_id, err = AuthId(token)
@@ -135,9 +138,6 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
-	}
-	if err != nil {
-		fmt.Println(err)
 	}
 
 	// Upvote
@@ -164,14 +164,31 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 
 // DownVote updates a vote and returns the voted comment
 func DownVote(w http.ResponseWriter, r *http.Request) {
+	var user_id int
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
-	user_id := 1
 	if err != nil {
 		fmt.Println(err)
 	}
+	if _, ok := r.Header["Authentication"]; ok {
+		token := r.Header["Authentication"][0]
+		user_id, err = AuthId(token)
+		if err != nil {
+			w.Header().Set("Content-Type",
+				"application/json;charset=UTF-8")
+			w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		}
+	} else {
+		w.Header().Set("Content-Type",
+			"application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound) // Doesn't exist
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 
-	// Upvote
+	// Downvote
 	err = database.VoteComment(db, comment_id, user_id, false)
 	if err != nil {
 		w.Header().Set("Content-Type",
