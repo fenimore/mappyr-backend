@@ -25,7 +25,7 @@ func Serve(connection *sql.DB, port string) { // pass in connection
 	//e := database.MockUpvote(db) // database.MockUsers(db)
 	//if e != nil {
 	//fmt.Println(e)
-	//	}
+	//}
 	e := database.TallyVotes(1, db)
 	if e != nil {
 		fmt.Println(e)

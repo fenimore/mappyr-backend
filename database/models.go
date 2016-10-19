@@ -76,7 +76,7 @@ func MockUpvote(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(1, 2)
+	_, err = stmt.Exec(2, 2)
 	if err != nil {
 		fmt.Println(err)
 	}

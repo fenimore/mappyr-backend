@@ -235,7 +235,7 @@ func ReadUsers(db *sql.DB) ([]User, error) {
 /* Votes */
 // Search for votes by comments
 func TallyVotes(comment_id int, db *sql.DB) error {
-	downRows, err := db.Query("select * from upvotes where comment_id = $1", comment_id)
+	downRows, err := db.Query("select * from downvotes where comment_id = $1", comment_id)
 	upRows, err := db.Query("select * from upvotes where comment_id = $1", comment_id)
 	if err != nil {
 		return err
@@ -264,7 +264,7 @@ func TallyVotes(comment_id int, db *sql.DB) error {
 	}
 	upRows.Close()
 	downRows.Close()
-	fmt.Println(ups[0])
-	fmt.Println(downs[0])
+	fmt.Println(ups)
+	fmt.Println(downs)
 	return nil
 }
