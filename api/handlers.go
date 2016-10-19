@@ -174,7 +174,7 @@ func DownVote(w http.ResponseWriter, r *http.Request) {
 func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
-	err = database.Delete(db, id)
+	err = database.DeleteComment(db, id)
 	if err != nil {
 		w.Header().Set("Content-Type",
 			"application/json;charset=UTF-8")

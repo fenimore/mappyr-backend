@@ -156,25 +156,12 @@ func WriteComment(db *sql.DB, c Comment) (int, error) {
 
 /* Update DB */
 // UpVoteComment
-func UpVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET upvotes = upvotes + 1 where comment_id=$1")
+func Vote(db *sql.DB, comment_id, user_id int, up bool) error {
+	stmt, err := db.Prepare("INSERT INTO votes(comment_id, user_id, up)VALUES($1, $2, $3)")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(id)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// DownVoteComment downvotes a row
-func DownVoteComment(db *sql.DB, id int) error {
-	stmt, err := db.Prepare("UPDATE comments SET downvotes = downvotes + 1 where comment_id=$1")
-	if err != nil {
-		return err
-	}
-	_, err = stmt.Exec(id)
+	_, err = stmt.Exec(comment_id, user_id, up)
 	if err != nil {
 		return err
 	}
@@ -182,7 +169,7 @@ func DownVoteComment(db *sql.DB, id int) error {
 }
 
 /* Delete */
-func Delete(db *sql.DB, id int) error {
+func DeleteComment(db *sql.DB, id int) error {
 	stmt, err := db.Prepare("delete FROM comments WHERE comment_id=$1")
 	if err != nil {
 		return err
