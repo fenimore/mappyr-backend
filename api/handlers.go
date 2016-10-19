@@ -303,6 +303,8 @@ func NewToken(w http.ResponseWriter, r *http.Request) {
 
 /* Users */
 // ShowUsers collects all users
+// TODO: New User
+// ShowUsers return a list of all users
 func ShowUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := database.ReadUsers(db)
 	if err != nil {
@@ -311,6 +313,51 @@ func ShowUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(users)
+	if err != nil {
+		fmt.Fprintf(w, "Error JSON encoding %s", err)
+	}
+}
+
+// TODO: Get ID from USername
+
+func UserVotes(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, ok := strconv.Atoi(vars["id"]) // this should be ID in production
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	votes, err := database.UserVotes(id, db)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(votes)
+	if err != nil {
+		fmt.Fprintf(w, "Error JSON encoding %s", err)
+	}
+
+}
+
+func UserComments(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, ok := strconv.Atoi(vars["id"]) // this should be ID in production
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	comments, err := database.UserComments(id, db)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(comments)
 	if err != nil {
 		fmt.Fprintf(w, "Error JSON encoding %s", err)
 	}

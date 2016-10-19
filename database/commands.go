@@ -272,6 +272,30 @@ func UserVotes(user_id, db *sql.DB) ([]Vote, error) {
 	return votes, nil
 }
 
+func UserComments(user_id, db *sql.DB) ([]Comment, error) {
+	comments := make([]Comment, 0)
+	rows, err := db.Query("select * from comments where user_id = $1", user_id)
+	if err != nil {
+		return comments, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		c := Comment{}
+		err = rows.Scan(&c.Id, &c.Title,
+			&c.Description,
+			&c.Lat, &c.Lon,
+			&c.Upvotes, &c.Downvotes,
+			&c.Date, &c.UserId)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, c)
+	}
+	rows.Close()
+	return votes, nil
+}
+
 // TallyVotes Search for votes by comments
 func TallyVotes(db *sql.DB) error {
 	rows, err := db.Query("select * from votes")
