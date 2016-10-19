@@ -23,7 +23,8 @@ func InitDB() (*sql.DB, error) {
 	//url := os.Getenv("DATABASE_URL")
 	//connection, _ := pq.ParseURL(url) // HEROKU
 	// HEROKU: sslmode=require
-	connection := fmt.Sprintf(" user=%s password=%s dbname=%s sslmode=%s",
+	// HEROKU: add a space!!
+	connection := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s",
 		DB_USER, DB_PASSWORD, DB_NAME, DB_SSL)
 
 	db, err := sql.Open("postgres", connection)
@@ -129,7 +130,7 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
-	err := db.QueryRow("INSERT INTO comments(title,description,lat,lon,date,user_id)"+
+	err := db.QueryRow("INSERT INTO comments(title,description,lat,lon,pub_date,user_id)"+
 		" VALUES($1,$2,$3,$4,$5,$6) returning comment_id;",
 		c.Title, c.Description, c.Lat, c.Lon, time.Now(), c.UserId).Scan(&lastInsertId)
 	if err != nil {
