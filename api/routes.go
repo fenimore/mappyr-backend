@@ -84,7 +84,7 @@ var routes = Routes{
 	Route{ // For testing purposes
 		"NewToken",
 		"GET",
-		"/token",
+		"/token/{id}",
 		NewToken,
 	},
 }

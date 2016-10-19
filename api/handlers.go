@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/polypmer/mappyr-backend/database"
 )
@@ -195,12 +196,66 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 }
 
 /* Authentication */
+
+var signingKey = []byte("secret key")
+
+type Claims struct {
+	Username string `json:"username"`
+	jwt.StandardClaims
+}
+
 // Login authenticates user using jwt token
 func Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Logout deletes the cookie
+func Logout(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// Validate is middleware for making sure people can't delete the wrong shit
+func Validate(w http.ResponseWriter, r *http.Request) {
+
+}
+
 // NewToken
 func NewToken(w http.ResponseWriter, r *http.Request) {
+	// in production I'd authenticate against a database before setting the token
 
+	vars := mux.Vars(r)
+	id, ok := vars["id"] // strconv.Atoi(vars["id"]) // this should be ID in production
+	if !ok {
+		fmt.Println("NewToken ID error")
+	}
+
+	expireToken := time.Now().Add(time.Hour * 1).Unix()
+	expireCookie := time.Now().Add(time.Hour * 1)
+
+	// Set claims from database:
+	claims := Claims{
+		id, // This is just name for now, but it should be retreived from db first
+		jwt.StandardClaims{
+			ExpiresAt: expireToken,
+			Issuer:    "localhost:8080", // Changes in Production
+		},
+	}
+	// Create the token using your claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Signs the token with the secret
+	signedToken, _ := token.SignedString(signingKey)
+
+	cookie := http.Cookie{
+		Name:     "Auth",
+		Value:    signedToken,
+		Expires:  expireCookie,
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &cookie)
+
+	// Either redirect to profile lol
+	// or write a json with the cookie
+	w.Write([]byte(signedToken))
 }
