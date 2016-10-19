@@ -22,7 +22,7 @@ func Serve(connection *sql.DB, port string) { // pass in connection
 	//port = ":" + port
 	fmt.Println("Serving On:", port)
 
-	e := database.MockData(db)
+	e := database.MockUpvote(db) // database.MockUsers(db)
 	if e != nil {
 		fmt.Println(e)
 	}

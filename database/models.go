@@ -52,7 +52,7 @@ type User struct {
 	//Comments []Comment `json:"comments"`
 }
 
-func MockData(db *sql.DB) error {
+func MockUsers(db *sql.DB) error {
 	stmt, err := db.Prepare("INSERT INTO users(user_name, password, create_date, email)" +
 		"VALUES($1, $2, $3, $4)")
 	if err != nil {
@@ -60,8 +60,25 @@ func MockData(db *sql.DB) error {
 	}
 	_, err = stmt.Exec("Fenimore", "H2cA45x090",
 		time.Now(), "me@what.com")
+	if err != nil {
+		fmt.Println(err)
+	}
 	_, err = stmt.Exec("Geffry", "password",
 		time.Now(), "he@what.com")
+	if err != nil {
+		fmt.Println(err)
+	}
+	return nil
+}
 
+func MockUpvote(db *sql.DB) error {
+	stmt, err := db.Prepare("INSERT INTO upvotes(comment_id, user_id)VALUES($1, $2)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(1, 1)
+	if err != nil {
+		fmt.Println(err)
+	}
 	return nil
 }
