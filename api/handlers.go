@@ -68,6 +68,7 @@ func ShowComments(w http.ResponseWriter, r *http.Request) {
 // If no user is specified, use 0 for id
 func NewComment(w http.ResponseWriter, r *http.Request) {
 	// This is taking a POST method
+	// TODO: Take User ID from Auth Token
 	var comment database.Comment
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -114,7 +115,7 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 func UpVote(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
-	user_id, err := strconv.Atoi(vars["user_id"])
+	user_id := 1 // TODO: Take User ID from Auth Token
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -127,7 +128,7 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound) // Doesn't exist
 		err = json.NewEncoder(w).Encode(err)
 		if err != nil {
-			fmt.Println(err)
+			Gfmt.Println(err)
 		}
 	} else {
 		c, _ := database.ReadComment(db, comment_id)
@@ -145,7 +146,7 @@ func UpVote(w http.ResponseWriter, r *http.Request) {
 func DownVote(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	comment_id, err := strconv.Atoi(vars["comment_id"])
-	user_id, err := strconv.Atoi(vars["user_id"])
+	user_id := 1
 	if err != nil {
 		fmt.Println(err)
 	}

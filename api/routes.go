@@ -43,7 +43,7 @@ var routes = Routes{
 	Route{
 		"ShowComment",
 		"GET",
-		"/comment/{id}",
+		"/comment/{id}", // Comment id
 		ShowComment,
 	},
 	Route{
@@ -60,14 +60,14 @@ var routes = Routes{
 	}, // UPDATE
 	Route{
 		"UpVote",
-		"GET",
-		"/upvote/{comment_id}/{user_id}",
+		"POST",
+		"/upvote/{comment_id}",
 		UpVote,
 	},
 	Route{
 		"DownVote",
-		"GET",
-		"/downvote/{comment_id}/{user_id}",
+		"POST",
+		"/downvote/{comment_id}",
 		DownVote,
 	},
 	Route{
