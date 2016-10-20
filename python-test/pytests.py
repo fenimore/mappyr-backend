@@ -2,7 +2,6 @@
 import requests
 
 # Example tokens with id
-
 token_1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiMSIsImV4cCI6MTQ3Njk3MTQ2NywiaXNzIjoibG9jYWxob3N0OjgwODAifQ.wv1UgclK5uKUYYZFpnx4DjLcHlinirTfzL0nhmrJ7gc"
 
 token_8 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiOCIsImV4cCI6MTQ3Njk3MzEwNCwiaXNzIjoibG9jYWxob3N0OjgwODAifQ.NnxhEH7ETklp8H_hkNNxFaJpHt0s4TdE2gWVRpSE39Q"
@@ -10,6 +9,7 @@ token_8 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiOCIsImV4cCI6MTQ3
 
 
 def set_up():
+    """This sets up a nice mock database with some fancy stuffs, and prints some rezults"""
     user_1 = {"username":"Wrinkle", "password":"Woootwooot", "email":"Noootme@gmail.com"}
     user_2 = {"username":"Simone", "password":"lulz", "email":"simone@gmail.com"}
     user_3 = {"username":"Anon", "password":"test", "email":"anon@gmail.com"}
