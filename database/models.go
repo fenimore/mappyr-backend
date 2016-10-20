@@ -25,7 +25,7 @@ type Comment struct {
 }
 
 func (c *Comment) String() string {
-	return fmt.Sprintf("Comment %i: %s, %d\nAt %f %f",
+	return fmt.Sprintf("Comment %d: %s, %d\nAt %f %f",
 		c.Id, c.Title, c.Upvotes, c.Lat, c.Lon)
 }
 
@@ -38,7 +38,7 @@ type Vote struct {
 
 type User struct {
 	Id       int       `json:"id"`
-	Name     string    `json:"username¨`
+	Name     string    `json:"nick"`
 	Password string    `json:"password"`
 	Date     time.Time `json:"date"`
 	Email    string    `json:"email"`

@@ -86,7 +86,7 @@ var routes = Routes{
 	Route{
 		"ShowUsers",
 		"GET",
-		"/users",
+		"/all/users",
 		ShowUsers,
 	},
 	Route{
