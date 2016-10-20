@@ -4,35 +4,35 @@ Soo there are a not too many things this can do yet, but here it is.
 
 ## Routes
 
-	/
+    /
 
 Index doesn't really do anything
 
-	/comment/{id}
-	
+    /comment/{id}
+
 returns a specific comment by it's id, the response will look like this:
 
 `{"id":2,"title":"Great food!","description":"Although crap service","latitude":41.353,"longitude":-71.113,"upvotes":-1,"downvotes":1,"date":"2016-10-11T11:27:20.19479779-04:00","user-id":`
 
-	/comments
-	
+    /comments
+
 returns a json list of **all** comments.
 
-	/new
-	
+    /new
+
 the create route accepts the POST method, it only needs a title, description, and the latitude and longitude. Notice the numbers aren't in quotes, here's an example curl:
 
 `curl -H "Content-Type: application/json" -d '{"title":"This place sux0rs", "description":"Yikes","latitude":41.33894, "longitude":-71.666}' http://localhost:8080/new `
 
-	/upvote/{id} 
-	//OR
-	/downvote/{id}
+    /upvote/{id}
+    //OR
+    /downvote/{id}
 
 These accept a GET method, and they update the count of downvotes or upvotes for a comment row. It'll then return the very comment which is being commented (maybe this'll just want to be ignored, but I thought'd be a good idea to return *something*.
 
 
-	/delete/{id}
-	
+    /delete/{id}
+
 this accepts an id, and deletes that post. Uhm, this *needs* some sort of auth.
 
 ## TODO
@@ -46,6 +46,65 @@ This list ought to be longer
 ### todo routes:
 
 
-	/login
-	
-	/token
+    /login
+
+    /token
+
+
+
+
+
+# API v2, not yet deployed
+
+## User Endpoints
+
+    @POST
+    /signup
+
+Respond with the new user in json.
+
+TODO: redirect to login.
+
+The password will be in a hash, to log in, the original password must be entered (you can't just copy and paste the response from signup.
+
+    @POST
+    /login
+
+Respond with a Auth Token to be included in Headers
+
+     /all/users
+
+Respond with list of all users.
+
+    /votes/{user_id}
+
+Respond with list of votes made by a user
+
+    /comments/{user_id}
+
+Respond with list of comments posted by a user
+
+## Auth
+
+The Actions (below) require an Auth Token in the Header. Add this field to header:
+
+    Authentication: {TOKEN}
+
+This token will tell the database who it is that is performing the actions
+
+    @POST
+    /new
+
+Send data of the username
+
+    @GET
+    /upvote/{comment_id}
+
+    @GET
+    /downvote/{comment_id}
+
+## Comment Endpoints
+
+    /all/commments
+
+    /comment/{id}
