@@ -61,10 +61,10 @@ CREATE TABLE IF NOT EXISTS comments(
 	user_schema := `
 CREATE TABLE IF NOT EXISTS users(
     user_id SERIAL PRIMARY KEY,
-    user_name VARCHAR(50) NOT NULL,
-    password VARCHAR(50),
+    user_name VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(70),
     create_date TIMESTAMP,
-    email VARCHAR(50)
+    email VARCHAR(100) UNIQUE
 )
 `
 	vote_schema := `
