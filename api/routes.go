@@ -117,10 +117,4 @@ var routes = Routes{
 		"/token/{id}",
 		NewToken,
 	},
-	Route{
-		"ParseToken",
-		"GET",
-		"/parse/{token}",
-		ParseToken,
-	},
 }

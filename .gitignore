@@ -4,6 +4,7 @@
 *.so
 
 # Folders
+scraps
 _obj
 _test
 

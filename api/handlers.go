@@ -15,6 +15,10 @@ import (
 	"github.com/polypmer/mappyr-backend/database"
 )
 
+/* ############################################################
+ Index
+############################################################ */
+
 func Index(w http.ResponseWriter, r *http.Request) {
 
 	//fmt.Println(r.Header["Authentication"])
@@ -25,7 +29,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Index")
 }
 
-/* DB Read */
+/* ############################################################
+ Comments and Voting
+############################################################ */
 
 func ShowComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -122,11 +128,11 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 	comment.UserId = user_id
 	// Add the user to the comment
 
-	id_, err := database.WriteComment(db, comment)
+	id, err := database.WriteComment(db, comment)
 	if err != nil {
 		fmt.Println(err)
 	}
-	commend.Id = id
+	comment.Id = id
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 
@@ -259,7 +265,9 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/* Authentication */
+/* ############################################################
+ Authentication
+############################################################ */
 
 var signingKey = []byte("secret key")
 
@@ -357,12 +365,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // Logout deletes the cookie.
 // There is no cookie. So this doesn't make any sense.
 func Logout(w http.ResponseWriter, r *http.Request) {
-
+	// Remove Cookie?
 }
 
 // Validate is middleware for making sure people can't delete the wrong shit
 func Validate(w http.ResponseWriter, r *http.Request) {
-
+	// Wrapper for functions?
+	// For admin???
 }
 
 // AuthId takes a token and returns the user ID encrypted.
@@ -437,7 +446,9 @@ func NewToken(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(signedToken))
 }
 
-/* Users */
+/* ############################################################
+ Users
+############################################################ */
 // ShowUsers collects all users
 // TODO: New User
 // ShowUsers return a list of all users
