@@ -17,6 +17,20 @@ def set_up():
     u2 = signup(user_2)
     u3 = signup(user_3)
 
+    simone_token = login({"username":"Simone", "password":"lulz"})
+    anon_token = login({"username":"Anon", "password":"test"})
+
+    c_1 = comment({"title":"SUsh1","description":"THIS Rox0rs",
+                            "latitude":45, "longitude":88}, simone_token)
+    c_2 = comment({"title":"Park Bench","description":"THIS sux0rs",
+                            "latitude":43.44444, "longitude":84}, anon_token)
+
+    downvoted = downvote(c_2["id"], simone_token)
+    upvoted = upvote(c1["id"], anon_token)
+
+    print(user_votes(u1["id"]))
+    print(user_votes(u2["id"]))
+    print(user_votes(u3["id"]))
 
 ##########################################################################################
 #USER ACTIONS
@@ -27,42 +41,37 @@ def signup(j):
     returns the user in json
     """
     r = requests.post('http://localhost:8080/signup', json=j)
+
     return r.json()
 
 
-def login():
+def login(j):
     """Login a user with a username and password
 
     returns the auth token in dict
     """
-    r = requests.post('http://localhost:8080/login', json ={"username":"Simone",
-                                                            "password":"lulz"})
-    # print(r.status_code)
+    r = requests.post('http://localhost:8080/login', json=j)
+
     return r.json()
 
-def comment():
+def comment(j, token):
     """Post a comment with a token in the headers"""
     r = requests.post('http://localhost:8080/new',
-                      json={"title":"SUsh1","description":"THIS Rox0rs",
-                            "latitude":45, "longitude":88},
-                      headers={"Authentication":token_8})
+                      json=j,
+                      headers={"Authentication":token})
 
-    #print(r.status_code)
-    #print(r.json())
     return r.json()
 
 
-def upvote(comment):
+def upvote(comment_id, token):
     """UpVOTE!"""
-    r = requests.get('http://localhost:8080/upvote/'+ comment, headers={"Authentication":token_8})
-    print(r.status_code)
-    print(r.json())
+    r = requests.get('http://localhost:8080/upvote/'+ comment_id, headers={"Authentication":token})
+    return r.json()
 
-def downvote(comment):
+def downvote(comment_id, token):
     """downVOTE!"""
-    r = requests.get('http://localhost:8080/downvote/'+ comment, headers={"Authentication":token_8})
-    print(r.status_code)
-    print(r.json())
+    r = requests.get('http://localhost:8080/downvote/'+ comment_id, headers={"Authentication":token})
+    return r.json()
 
 ##########################################################################################
 #Get Votes or COmments of User
@@ -71,12 +80,10 @@ def user_votes(id):
     """User votes takes the id, but pass a string"""
     r = requests.get("http://localhost:8080/votes/"+id)
 
-    print(r.status_code)
-    print(r.json())
+    return r.json()
 
 def user_comments(id):
     """User comments takes the id, but pass a string"""
     r = requests.get("http://localhost:8080/comments/"+id)
 
-    print(r.status_code)
-    print(r.json())
+    return r.json()
