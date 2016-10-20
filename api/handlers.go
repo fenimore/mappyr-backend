@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"crypto/sha1"
+	"encoding/base64"
 	"errors"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
@@ -303,20 +305,23 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	user.Date = time.Now()
-	//import "crypto/sha1"
-	//h := sha1.New()
-	//io.WriteString(h, "password")
-	//fmt.Printf("% x", h.Sum(nil))
+
+	h := sha1.New()
+	io.WriteString(h, user.Password)
+	hashed := base64.URLEncoding.EncodeToString(h.Sum(nil))
 	// CONVERT TO STRING, from uint18?
-	// user.Password = HASHED PASSWORD
+	user.Password = hashed
 	id, err := database.SignUp(db, user)
 	if err != nil {
 		fmt.Println(err)
 	}
-	// TODO: Get the id
 	user.Id = id
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
+	if id == -1 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	} else {
+		w.WriteHeader(http.StatusCreated)
+	}
 
 	// Feed it back into the response Writer
 	err = json.NewEncoder(w).Encode(user)
@@ -353,6 +358,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	// Unmarshal, stick into my struct
 	err = json.Unmarshal(body, &attempt)
+	h := sha1.New()
+	io.WriteString(h, attempt.Password)
+	hashed := base64.URLEncoding.EncodeToString(h.Sum(nil))
+	attempt.Password = hashed
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 		w.WriteHeader(http.StatusUnprocessableEntity) //422
