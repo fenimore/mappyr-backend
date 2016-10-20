@@ -246,22 +246,28 @@ func SignUp(db *sql.DB, u User) (int, error) {
 }
 
 // LogIn checks if the password and username match, if so, return TRUE
-func LogIn(db *sql.DB, username, password string) (bool, error) {
+func LogIn(db *sql.DB, username, password string) (bool, int) {
 	var realPassword string
 	err := db.QueryRow("SELECT password FROM users WHERE user_name = $1",
 		username).Scan(&realPassword)
 	switch {
 	case err == sql.ErrNoRows:
-		return false, err
+		return false, 0
 	case err != nil:
-		return false, err
+		return false, 0
 	default:
 		break
 	}
 	if realPassword == password {
-		return true, nil
+		var id int
+		err := db.QueryRow("SELECT user_id FROM users WHERE user_name = $1",
+			username).Scan(&id)
+		if err != nil {
+			return false, 0
+		}
+		return true, id
 	} else {
-		return false, errors.New("Wrong Username or Password")
+		return false, 0
 	}
 
 }

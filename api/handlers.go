@@ -325,6 +325,11 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type AuthAttempt struct {
+	Name     string `json:"username"`
+	Password string `json:"password"`
+}
+
 // Login authenticates user and returns the token
 // this token must be included in the Header Authentication:
 // field for Posting and Voting.
@@ -333,7 +338,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Hash of pass
 	// Check against password
 	// return token
-	attempt := database.User{}
+	attempt := AuthAttempt{}
 	// Hash here?
 	// Add password and username
 	// Then login lol
@@ -356,10 +361,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 	}
-	// Attempt to sign in
-	// If I succeed, pass back a token
-	// with id
-
+	ok, id := database.LogIn(db, attempt.Name, attempt.Password)
+	if ok {
+		token, err := AuthToken(id)
+		if err == nil {
+			w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+			w.WriteHeader(http.StatusOK) //200
+			j := "{\"Authentication\":+" + token + "}"
+			err = json.NewEncoder(w).Encode(j)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound) //404
+	err = json.NewEncoder(w).Encode(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 // Logout deletes the cookie.
@@ -406,6 +426,26 @@ func AuthId(token string) (int, error) {
 		}
 		return uid, nil
 	}
+}
+
+// AuthToken takes an ID and returns the token.
+func AuthToken(id int) (string, error) {
+	expireToken := time.Now().Add(time.Hour * 1).Unix()
+	//expireCookie := time.Now().Add(time.Hour * 1)
+	uid := strconv.Itoa(id)
+	claims := Claims{
+		uid, // the user_id
+		jwt.StandardClaims{
+			ExpiresAt: expireToken,
+			Issuer:    "localhost:8080", // Changes in Production HEROKU
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// TODO: Catch this error?
+	signedToken, _ := token.SignedString(signingKey)
+
+	return signedToken, nil
 }
 
 // NewToken
