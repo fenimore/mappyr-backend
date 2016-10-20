@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"database/sql"
 	_ "github.com/bmizerany/pq"
 )
 
@@ -33,7 +32,6 @@ type Vote struct {
 	Comment int  `json:"comment_id"`
 	User    int  `json:"user_id"`
 	Up      bool `json:"up"`
-	Key     int  `json:"key"`
 }
 
 type User struct {
@@ -45,47 +43,4 @@ type User struct {
 	// One to Many relationshionship
 	/// USE gorm later
 	//Comments []Comment `json:"comments"`
-}
-
-func MockUsers(db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO users(user_name, password, create_date, email)" +
-		"VALUES($1, $2, $3, $4)")
-	if err != nil {
-		return err
-	}
-	_, err = stmt.Exec("Fenimore", "lulz",
-		time.Now(), "fen@what.com")
-	if err != nil {
-		fmt.Println(err)
-	}
-	_, err = stmt.Exec("Numba2", "password",
-		time.Now(), "Dooom@what.com")
-	if err != nil {
-		fmt.Println(err)
-	}
-	return nil
-}
-
-func MockVote(db *sql.DB) error {
-	stmt, err := db.Prepare("INSERT INTO votes(comment_id, user_id, up)VALUES($1, $2, $3)")
-	if err != nil {
-		return err
-	}
-	// True means is upvote
-	_, err = stmt.Exec(2, 2, true)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	// True means is upvote
-	_, err = stmt.Exec(3, 1, true)
-	if err != nil {
-		fmt.Println(err)
-	}
-	// True means is upvote
-	_, err = stmt.Exec(3, 2, false)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return nil
 }
