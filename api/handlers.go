@@ -360,6 +360,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		return
 	}
 	ok, id := database.LogIn(db, attempt.Name, attempt.Password)
 	if ok {
@@ -367,11 +368,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 			w.WriteHeader(http.StatusOK) //200
-			j := "{\"Authentication\":+" + token + "}"
+			j := "{\"Authentication\":" + token + "}"
 			err = json.NewEncoder(w).Encode(j)
 			if err != nil {
 				fmt.Println(err)
 			}
+			return
 		}
 	}
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
@@ -380,6 +382,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	return
 }
 
 // Logout deletes the cookie.

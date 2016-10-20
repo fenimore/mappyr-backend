@@ -19,7 +19,12 @@ def signup():
     print(r.json())
 
 
-#def login():
+def login():
+    """Login a user with a username and password"""
+    r = requests.post('http://localhost:8080/login', json ={"username":"Simone",
+                                                             "password":"lulz"})
+    print(r.status_code)
+    print(r.json())
 
 def comment():
     """Post a comment with a token in the headers"""
