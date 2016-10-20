@@ -232,6 +232,7 @@ func DeleteComment(db *sql.DB, id int) error {
 Users
    ################################################################################  */
 
+// SignUp will create a new user in the table.
 func SignUp(db *sql.DB, u User) (int, error) {
 	var lastInsertId int
 	err := db.QueryRow("INSERT INTO users(user_name, password, create_date, email)"+
@@ -242,6 +243,27 @@ func SignUp(db *sql.DB, u User) (int, error) {
 		return -1, err
 	}
 	return lastInsertId, nil
+}
+
+// LogIn checks if the password and username match, if so, return TRUE
+func LogIn(db *sql.DB, username, password string) (bool, error) {
+	var realPassword string
+	err := db.QueryRow("SELECT password FROM users WHERE user_name = $1",
+		username).Scan(&realPassword)
+	switch {
+	case err == sql.ErrNoRows:
+		return false, err
+	case err != nil:
+		return false, err
+	default:
+		break
+	}
+	if realPassword == password {
+		return true, nil
+	} else {
+		return false, errors.New("Wrong Username or Password")
+	}
+
 }
 
 // ReadUsers returns all comments
