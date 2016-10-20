@@ -325,6 +325,33 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Hash of pass
 	// Check against password
 	// return token
+	attempt := database.User{}
+	// Hash here?
+	// Add password and username
+	// Then login lol
+	// Get JSON data
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = r.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Unmarshal, stick into my struct
+	err = json.Unmarshal(body, &attempt)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) //422
+		err = json.NewEncoder(w).Encode(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	// Attempt to sign in
+	// If I succeed, pass back a token
+	// with id
+
 }
 
 // Logout deletes the cookie.
