@@ -92,13 +92,13 @@ var routes = Routes{
 	Route{
 		"UserVotes",
 		"GET",
-		"/votes/{id}",
+		"/votes/{user_id}",
 		UserVotes,
 	},
 	Route{
 		"UserComments",
 		"GET",
-		"/comments/{id}",
+		"/comments/{user_id}",
 		UserComments,
 	},
 	// TODO: Create

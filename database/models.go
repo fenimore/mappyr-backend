@@ -38,7 +38,7 @@ type Vote struct {
 
 type User struct {
 	Id       int       `json:"id"`
-	Name     string    `json:"nick"`
+	Name     string    `json:"username"`
 	Password string    `json:"password"`
 	Date     time.Time `json:"date"`
 	Email    string    `json:"email"`
