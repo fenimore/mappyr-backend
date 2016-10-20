@@ -17,7 +17,10 @@ const (
 	DB_SSL      = "disable" // "require"
 )
 
-/* Database Helpers */
+/* ################################################################################
+Database Helpers
+   ################################################################################  */
+
 // InitDB Opens a new sqlite3 db in path
 func InitDB() (*sql.DB, error) {
 	//url := os.Getenv("DATABASE_URL")
@@ -93,7 +96,9 @@ CREATE TABLE IF NOT EXISTS votes(
 	return nil
 }
 
-/* DB read */
+/* ################################################################################
+Comments
+   ################################################################################  */
 
 // ReadComment reads a comment from the datase with an id.
 func ReadComment(db *sql.DB, id int) (Comment, error) {
@@ -145,7 +150,6 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 	return comments, nil
 }
 
-/* DB Write */
 // WriteComment
 func WriteComment(db *sql.DB, c Comment) (int, error) {
 	var lastInsertId int
@@ -158,7 +162,6 @@ func WriteComment(db *sql.DB, c Comment) (int, error) {
 	return lastInsertId, nil
 }
 
-/* Update DB */
 // UpVoteComment
 func VoteComment(db *sql.DB, comment_id, user_id int, up bool) error {
 	stmt, err := db.Prepare("INSERT INTO votes(comment_id, user_id, up)VALUES($1, $2, $3)")
@@ -190,6 +193,28 @@ func VoteComment(db *sql.DB, comment_id, user_id int, up bool) error {
 	return nil
 }
 
+// CommentVotes returns a slice of Vote structs according
+// to a passed in comment ID
+func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
+	votes := make([]Vote, 0)
+	rows, err := db.Query("select * from votes where comment_id = $1", comment_id)
+	if err != nil {
+		return votes, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		v := Vote{}
+		err = rows.Scan(&v.Comment, &v.User, &v.Up)
+		if err != nil {
+			return votes, err
+		}
+		votes = append(votes, v)
+	}
+	rows.Close()
+	return votes, nil
+}
+
 /* Delete */
 func DeleteComment(db *sql.DB, id int) error {
 	stmt, err := db.Prepare("delete FROM comments WHERE comment_id=$1")
@@ -203,7 +228,9 @@ func DeleteComment(db *sql.DB, id int) error {
 	return nil
 }
 
-/* Users */
+/* ################################################################################
+Users
+   ################################################################################  */
 
 func SignUp(db *sql.DB, u User) (int, error) {
 	var lastInsertId int
@@ -243,27 +270,6 @@ func ReadUsers(db *sql.DB) ([]User, error) {
 }
 
 /* Votes */
-// CommentVotes returns a slice of Vote structs according
-// to a passed in comment ID
-func CommentVotes(comment_id, db *sql.DB) ([]Vote, error) {
-	votes := make([]Vote, 0)
-	rows, err := db.Query("select * from votes where comment_id = $1", comment_id)
-	if err != nil {
-		return votes, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		v := Vote{}
-		err = rows.Scan(&v.Comment, &v.User, &v.Up)
-		if err != nil {
-			return votes, err
-		}
-		votes = append(votes, v)
-	}
-	rows.Close()
-	return votes, nil
-}
 
 func UserVotes(user_id int, db *sql.DB) ([]Vote, error) {
 	votes := make([]Vote, 0)
@@ -307,27 +313,4 @@ func UserComments(user_id int, db *sql.DB) ([]Comment, error) {
 	}
 	rows.Close()
 	return comments, nil
-}
-
-// TallyVotes Search for votes by comments
-func TallyVotes(db *sql.DB) error {
-	rows, err := db.Query("select * from votes")
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	votes := make([]Vote, 0)
-
-	for rows.Next() {
-		v := Vote{}
-		err = rows.Scan(&v.Comment, &v.User, &v.Up)
-		if err != nil {
-			return err
-		}
-		votes = append(votes, v)
-	}
-	rows.Close()
-	fmt.Println(votes)
-	return nil
 }
