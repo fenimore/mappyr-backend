@@ -7,24 +7,38 @@ token_1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiMSIsImV4cCI6MTQ3
 
 token_8 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiOCIsImV4cCI6MTQ3Njk3MzEwNCwiaXNzIjoibG9jYWxob3N0OjgwODAifQ.NnxhEH7ETklp8H_hkNNxFaJpHt0s4TdE2gWVRpSE39Q"
 
+
+
+def set_up():
+    user_1 = {"username":"Wrinkle", "password":"Woootwooot", "email":"Noootme@gmail.com"}
+    user_2 = {"username":"Simone", "password":"lulz", "email":"Noootme@gmail.com"}
+    user_3 = {"username":"Anon", "password":"test", "email":"Noootme@gmail.com"}
+    u1 = signup(user_1)
+    u2 = signup(user_2)
+    u3 = signup(user_3)
+
+
 ##########################################################################################
 #USER ACTIONS
 ##########################################################################################
-def signup():
-    """Create a new user"""
-    r = requests.post('http://localhost:8080/signup', json ={"username":"Wrinkle",
-                                                             "password":"Woootwooot",
-                                                             "email":"Noootme@gmail.com"})
-    print(r.status_code)
-    print(r.json())
+def signup(j):
+    """Create a new user
+
+    returns the user in json
+    """
+    r = requests.post('http://localhost:8080/signup', json=j)
+    return r.json()
 
 
 def login():
-    """Login a user with a username and password"""
+    """Login a user with a username and password
+
+    returns the auth token in dict
+    """
     r = requests.post('http://localhost:8080/login', json ={"username":"Simone",
-                                                             "password":"lulz"})
-    print(r.status_code)
-    print(r.json())
+                                                            "password":"lulz"})
+    # print(r.status_code)
+    return r.json()
 
 def comment():
     """Post a comment with a token in the headers"""
@@ -33,8 +47,9 @@ def comment():
                             "latitude":45, "longitude":88},
                       headers={"Authentication":token_8})
 
-    print(r.status_code)
-    print(r.json())
+    #print(r.status_code)
+    #print(r.json())
+    return r.json()
 
 
 def upvote(comment):

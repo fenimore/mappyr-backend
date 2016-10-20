@@ -368,11 +368,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 			w.WriteHeader(http.StatusOK) //200
-			j := "{\"Authentication\":" + token + "}"
-			err = json.NewEncoder(w).Encode(j)
-			if err != nil {
-				fmt.Println(err)
-			}
+			j := "{\"Authentication\":\"" + token + "\"}"
+			w.Write([]byte(j))
 			return
 		}
 	}
