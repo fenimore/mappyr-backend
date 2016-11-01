@@ -135,11 +135,38 @@ func ReadComments(db *sql.DB) ([]Comment, error) {
 
 	stmt := "SELECT * FROM comments"
 	rows, err := db.Query(stmt)
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
+	for rows.Next() {
+		c := Comment{}
+		err = rows.Scan(&c.Id, &c.Title,
+			&c.Description,
+			&c.Lat, &c.Lon,
+			&c.Upvotes, &c.Downvotes,
+			&c.Date, &c.UserId)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, c)
+	}
+	rows.Close() // Redundant is good
+	return comments, nil
+}
+
+// ReadLocalComments reads comments within ranges
+// TODO: Add the USER to the Comment Struct
+func ReadLocalComments(db *sql.DB, xRange, yRange [2]float64) ([]Comment, error) {
+	comments := make([]Comment, 0)
+
+	stmt := "SELECT * FROM comments WHERE lat BETWEEN $1 AND $2 AND lon BETWEEN $3 AND $4"
+	rows, err := db.Query(stmt, xRange[0], xRange[1], yRange[0], yRange[1])
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
 	for rows.Next() {
 		c := Comment{}
 		err = rows.Scan(&c.Id, &c.Title,
