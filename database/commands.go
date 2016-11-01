@@ -129,6 +129,7 @@ func ReadComment(db *sql.DB, id int) (Comment, error) {
 }
 
 // ReadComments returns all comments
+// TODO: Add the USER to the Comment Struct
 func ReadComments(db *sql.DB) ([]Comment, error) {
 	comments := make([]Comment, 0)
 

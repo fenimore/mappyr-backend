@@ -41,6 +41,7 @@ type User struct {
 	Password string    `json:"password"`
 	Date     time.Time `json:"date"`
 	Email    string    `json:"email"`
+	// FIXME: Failure to Not include password in JSON
 	// One to Many relationshionship
 	/// USE gorm later
 	//Comments []Comment `json:"comments"`
