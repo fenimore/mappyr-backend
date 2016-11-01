@@ -84,6 +84,12 @@ var routes = Routes{
 		Signup,
 	},
 	Route{
+		"ShowUser",
+		"GET",
+		"/user/{id}",
+		ShowUser,
+	},
+	Route{
 		"ShowUsers",
 		"GET",
 		"/all/users",
