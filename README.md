@@ -35,26 +35,10 @@ These accept a GET method, and they update the count of downvotes or upvotes for
 
 this accepts an id, and deletes that post. Uhm, this *needs* some sort of auth.
 
-## TODO
-
-This list ought to be longer
-
-1. Some sort of authentication, maybe hitching of OAuth so people don't need to create an account.
-2. Track the tokens, including 'anonomyous' tokens, to keep from 'voter fraud'.
-3. Expand the database to include a downvote and upvote table
-
-### todo routes:
-
-
-    /login
-
-    /token
-
-
-
-
 
 # API v2, not yet deployed
+
+
 
 ## User Endpoints
 
@@ -85,6 +69,8 @@ Respond with list of votes made by a user
 Respond with list of comments posted by a user
 
 ## Auth
+
+Future iterations of this application should lock all API calls behind a token provided only to official applications; As it stands, anyone sniffing packets could get lists of users etc.
 
 The Actions (below) require an Auth Token in the Header. Add this field to header:
 
