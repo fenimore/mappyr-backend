@@ -20,7 +20,8 @@ type Comment struct {
 	Upvotes     int       `json:"upvotes"`
 	Downvotes   int       `json:"downvotes"`
 	Date        time.Time `json:"date"`
-	UserId      int       `json:"user-id"` // 0 for anon
+	UserId      int       //`json:"user-id"` // 0 for anon
+	User        User      `json:"user"`
 }
 
 func (c *Comment) String() string {

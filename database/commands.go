@@ -272,7 +272,29 @@ func LogIn(db *sql.DB, username, password string) (bool, int) {
 
 }
 
-// ReadUsers returns all comments
+// ReadUser returns a user by ID
+func ReadUser(db *sql.DB, id int) (User, error) {
+	rows, err := db.Query("select * from users"+
+		" where user_id = $1", id)
+	u := User{}
+	if err != nil {
+		return u, err
+	}
+	defer rows.Close()
+	// There ought to be only one rows
+	for rows.Next() {
+		err = rows.Scan(&u.Id, &u.Name,
+			&u.Password, &u.Date,
+			&u.Email)
+	}
+	rows.Close()
+	if u.Id == 0 {
+		return u, errors.New("Id does not exist")
+	}
+	return u, nil
+}
+
+// ReadUsers returns all users
 func ReadUsers(db *sql.DB) ([]User, error) {
 	users := make([]User, 0)
 
