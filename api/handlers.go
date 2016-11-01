@@ -35,6 +35,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
  Comments and Voting
 ############################################################ */
 
+// ShowComment returns a json of a comment with the id.
+// This comment will have the User in the User field.
 func ShowComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -61,6 +63,7 @@ func ShowComment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ShowComments encodes json of ALLL comments
 func ShowComments(w http.ResponseWriter, r *http.Request) {
 	comments, err := database.ReadComments(db)
 	if err != nil {
@@ -72,6 +75,46 @@ func ShowComments(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "Error JSON encoding %s", err)
 	}
+}
+
+type Local struct {
+	LatMax float64 `json:"lat-max"`
+	LatMin float64 `json:"lat-min"`
+	LonMax float64 `json:"lon-max"`
+	LonMin float64 `json:"lon-min"`
+}
+
+// ShowLocalComments
+// A post for finding the comments by local
+// TODO: Add users to comments
+func ShowLocalComments(w http.ResponseWriter, r *http.Request) {
+	local := Local{}
+	// Body has the JSON for locality
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = r.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Unmarshal, stick into my struct
+	err = json.Unmarshal(body, &local)
+	if err != nil {
+		fmt.Println(err)
+	}
+	comments, err := database.ReadLocalComments(db,
+		[2]float64{local.LatMin, local.LatMax}, [2]float64{local.LonMin, local.LonMax})
+	if err != nil {
+		fmt.Println(err)
+	}
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(comments)
+	if err != nil {
+		fmt.Fprintf(w, "Error JSON encoding %s", err)
+	}
+
 }
 
 /* DB Write */
