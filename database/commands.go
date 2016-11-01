@@ -120,6 +120,11 @@ func ReadComment(db *sql.DB, id int) (Comment, error) {
 	if c.Id == 0 {
 		return c, errors.New("Id does not exist")
 	}
+	user, err := ReadUser(db, c.UserId)
+	if err != nil {
+		return c, errors.New("User doesn't exists")
+	}
+	c.User = user
 	return c, nil
 }
 
