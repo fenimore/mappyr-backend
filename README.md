@@ -90,6 +90,29 @@ The Actions (below) require an Auth Token in the Header. Add this field to heade
 
     Authentication: {TOKEN}
 
+To get this token first sign up:
+
+    @POST
+    /signup
+
+Include json with the sign up information (the password then gets hashed before entered into the database, so don't loose it.
+>{"username":"david", "password":"supersecret", "email":"david@gmail.com"}
+
+So signing up returns a JSON with the user (and their ID), but not with the authentication token. Signing up (at the moment) does minimal cleaning. No duplicate emails or usernames, but it does not test for valid emails.
+
+After signing up, try logging in to get the authentication token:
+
+    @POST
+    /login
+
+> {"username":"david", "password":"supersecret"}
+
+This will return an authentication token with user information signed (with the secret private key and so irreproducible without *this* auth process) in JSON. This is what must be included in the Header requests with the Authentication: option. The JSON will look like this:
+
+> {
+>    "Authentication": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyLWlkIjoiMTMiLCJleHAiOjE0NzY5OTkyMzMsImlzcyI6ImxvY2FsaG9zdDo4MDgwIn0.87VgAqtQOHKixe8_TikCFJKGCQiSI5e80cm5zHnA4A8"
+>}
+
 This token will tell the database who it is that is performing the actions
 
     @POST
@@ -103,6 +126,8 @@ Send data of the username
     @GET
     /downvote/{comment_id}
 
+`downvote` and `upvote` will vote on an ID. The authentication token inside the header will indicate who it is that is voting.
+
 ## Comment Endpoints
 
     @GET
@@ -111,7 +136,7 @@ Send data of the username
 Returns all comments possible. This, in production settings is probably unlikely/not so useful. Use instead the POST `/local`
 
     @POST
-    /local
+    /Local
 
 Get all comments *within* a certain longitude and latitude. Post with json such as:
 
@@ -120,7 +145,7 @@ Get all comments *within* a certain longitude and latitude. Post with json such 
     @GET
     /comment/{id}
 
-Otherwise get a single comment by **id**, this will return the posting User within the json, such as:
+Get a single comment by **id**, this will return the posting User within the json, such as:
 
 
 > {
