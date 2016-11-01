@@ -105,6 +105,38 @@ Send data of the username
 
 ## Comment Endpoints
 
+    @GET
     /all/commments
 
+Returns all comments possible. This, in production settings is probably unlikely/not so useful. Use instead the POST `/local`
+
+    @POST
+    /local
+
+Get all comments *within* a certain longitude and latitude. Post with json such as:
+
+> {"lat-max":50.0,"lat-min":0.0, "lon-max":85.0, "lon-min":50.0}
+
+    @GET
     /comment/{id}
+
+Otherwise get a single comment by **id**, this will return the posting User within the json, such as:
+
+
+> {
+>	"id": 1,
+>	"title": "SUsh1",
+>	"description": "THIS Rox0rs",
+>	"latitude": 45,
+>	"longitude": 88,
+>	"upvotes": 0,
+>	"downvotes": 0,
+>	"date": "2016-10-20T12:13:51.029814Z",
+>	"UserId": 2,
+>	"user": {
+>		"id": 2,
+>		"username": "Simone",
+>		"date": "2016-10-20T12:13:50.929836Z",
+>		"email": "simone@gmail.com"
+>	}
+}
