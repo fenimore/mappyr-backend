@@ -20,7 +20,7 @@ type Comment struct {
 	Upvotes     int       `json:"upvotes"`
 	Downvotes   int       `json:"downvotes"`
 	Date        time.Time `json:"date"`
-	UserId      int       //`json:"user-id"` // 0 for anon
+	UserId      int       `json:"user-id"` // 0 for anon
 	User        User      `json:"user"`
 }
 
@@ -38,7 +38,7 @@ type Vote struct {
 type User struct {
 	Id       int       `json:"id"`
 	Name     string    `json:"username"`
-	Password string    `json:"password"`
+	Password string    `json:"-"`
 	Date     time.Time `json:"date"`
 	Email    string    `json:"email"`
 	// FIXME: Failure to Not include password in JSON
