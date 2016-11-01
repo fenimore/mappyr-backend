@@ -47,6 +47,12 @@ var routes = Routes{
 		ShowComment,
 	},
 	Route{
+		"ShowLocal",
+		"POST",
+		"/local",
+		ShowLocalComments,
+	},
+	Route{
 		"ShowComments",
 		"GET",
 		"/all/comments",
